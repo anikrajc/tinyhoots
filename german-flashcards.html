@@ -1,483 +1,576 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Komorebi • Studio Ghibli Flashcards</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Kiwi+Maru:wght@300;400;500&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg-sky: #e4f2f7;
-      --bg-meadow: #eaf3e7;
-      --paper: #fdfbf7;
-      --paper-cream: #f6eedb;
-      --card-border: #dcd3c1;
-      --ink: #323d38;
-      --ink-soft: #5b6963;
-      --ink-muted: #8c9a94;
-      --totoro-grey: #7d8b82;
-      --grass-green: #689f63;
-      --grass-dark: #4b7a48;
-      --terracotta: #d9745b;
-      --sun-gold: #f4be5e;
-      --calcifer-orange: #f28b44;
-      --water-blue: #7bb5c4;
-      --wood: #8e6d53;
-      --radius-sm: 12px;
-      --radius-md: 20px;
-      --radius-lg: 32px;
-      --shadow-paper: 0 10px 25px -5px rgba(60, 75, 65, 0.08), 0 4px 10px -2px rgba(60, 75, 65, 0.04);
-      --shadow-float: 0 20px 35px -10px rgba(60, 75, 65, 0.15), 0 8px 16px -4px rgba(60, 75, 65, 0.08);
-      --font-body: 'Nunito', -apple-system, sans-serif;
-      --font-jp: 'Kiwi Maru', serif;
-      --font-hand: 'Gaegu', cursive;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#d3ebf5">
+<meta name="description" content="Komorebi Cards — cozy Studio Ghibli-flavored German flashcards with swipe gestures, speech and synth sounds.">
+<title>Komorebi Cards • Ghibli German Flashcards</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Kiwi+Maru:wght@300;400;500&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     TOKENS & RESET
+  ============================================================ */
+  :root {
+    --bg-sky: #e4f2f7;
+    --paper: #fdfbf7;
+    --paper-cream: #f6eedb;
+    --ink: #323d38;
+    --ink-soft: #5b6963;
+    --ink-muted: #8c9a94;
+    --grass-green: #689f63;
+    --grass-dark: #4b7a48;
+    --terracotta: #d9745b;
+    --sun-gold: #f4be5e;
+    --calcifer-orange: #f28b44;
+    --water-blue: #6da8ba;
+    --wood: #8e6d53;
+    --rose: #d97a8c;
+    --radius-sm: 12px;
+    --radius-md: 20px;
+    --radius-lg: 32px;
+    --shadow-paper: 0 10px 25px -5px rgba(60,75,65,.10), 0 4px 10px -2px rgba(60,75,65,.05);
+    --font-body: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-jp: 'Kiwi Maru', serif;
+    --font-hand: 'Gaegu', cursive;
+  }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
-    }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
-    body {
-      background: linear-gradient(180deg, #d3ebf5 0%, #e8f4e5 45%, #f4f6e8 100%);
-      font-family: var(--font-body);
-      color: var(--ink);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 24px 16px;
-      position: relative;
-      overflow-x: hidden;
-    }
+  html {
+    -webkit-text-size-adjust: 100%;
+    overscroll-behavior: none;
+  }
 
-    /* Ambient watercolor backdrop clouds & foliage */
-    .cloud {
-      position: absolute;
-      background: rgba(255, 255, 255, 0.65);
-      border-radius: 100px;
-      filter: blur(14px);
-      z-index: 0;
-      pointer-events: none;
-      animation: drift 28s infinite alternate ease-in-out;
-    }
-    .cloud-1 { width: 340px; height: 120px; top: 8%; left: -60px; }
-    .cloud-2 { width: 420px; height: 160px; top: 18%; right: -100px; animation-duration: 36s; }
-    .cloud-3 { width: 280px; height: 90px; bottom: 12%; left: 5%; filter: blur(20px); opacity: 0.5; }
+  body {
+    font-family: var(--font-body);
+    color: var(--ink);
+    background: linear-gradient(180deg, #cfe9f4 0%, #e8f4e5 48%, #f4f6e8 100%);
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: grid;
+    place-items: center;
+    padding: clamp(10px, 2.5vw, 28px);
+    padding-top: max(clamp(10px, 2.5vw, 28px), env(safe-area-inset-top));
+    padding-bottom: max(clamp(10px, 2.5vw, 28px), env(safe-area-inset-bottom));
+    position: relative;
+    overflow-x: hidden;
+  }
 
-    @keyframes drift {
-      0% { transform: translateX(0) translateY(0); }
-      100% { transform: translateX(45px) translateY(12px); }
-    }
+  button { font-family: inherit; }
+  .sr-only {
+    position: absolute; width: 1px; height: 1px;
+    clip: rect(0 0 0 0); clip-path: inset(50%); overflow: hidden; white-space: nowrap;
+  }
+  :focus-visible { outline: 3px solid rgba(109,168,186,.85); outline-offset: 2px; border-radius: 10px; }
 
-    /* Little Soot Sprite floating */
-    .soot-sprite {
-      position: absolute;
-      width: 22px;
-      height: 22px;
-      background: #2a2e2d;
-      border-radius: 50%;
-      z-index: 1;
-      opacity: 0.85;
-      box-shadow: 0 0 0 2px rgba(42,46,45,0.2);
-      animation: floatSoot 6s infinite ease-in-out;
-    }
-    .soot-sprite::before, .soot-sprite::after {
-      content: '';
-      position: absolute;
-      width: 5px;
-      height: 5px;
-      background: white;
-      border-radius: 50%;
-      top: 6px;
-    }
-    .soot-sprite::before { left: 4px; }
-    .soot-sprite::after { right: 4px; }
-    .soot-eye-dot {
-      position: absolute;
-      width: 2.5px;
-      height: 2.5px;
-      background: #111;
-      border-radius: 50%;
-      top: 7px;
-    }
-    .soot-eye-dot.l { left: 5.5px; }
-    .soot-eye-dot.r { right: 4.5px; }
+  /* ============================================================
+     AMBIENT GHIBLI BACKDROP (clouds, komorebi rays, soot, leaves)
+  ============================================================ */
+  .ambient { position: fixed; inset: 0; overflow: hidden; z-index: 0; pointer-events: none; }
 
-    @keyframes floatSoot {
-      0%, 100% { transform: translateY(0) rotate(0deg); }
-      50% { transform: translateY(-14px) rotate(8deg); }
-    }
+  .cloud {
+    position: absolute;
+    background: rgba(255,255,255,.65);
+    border-radius: 100px;
+    filter: blur(14px);
+    animation: drift 28s infinite alternate ease-in-out;
+  }
+  .cloud-1 { width: min(340px, 70vw); height: 120px; top: 8%;  left: -60px; }
+  .cloud-2 { width: min(420px, 80vw); height: 160px; top: 18%; right: -100px; animation-duration: 36s; }
+  .cloud-3 { width: 280px; height: 90px; bottom: 12%; left: 5%; filter: blur(20px); opacity: .5; }
+  @keyframes drift { from { transform: translate(0,0); } to { transform: translate(45px,12px); } }
 
-    /* Main App Container */
-    .app-shell {
-      position: relative;
-      z-index: 10;
-      width: 100%;
-      max-width: 440px;
-      background: rgba(253, 251, 247, 0.94);
-      backdrop-filter: blur(16px);
-      border: 3px solid #efe7d5;
-      border-radius: var(--radius-lg);
-      padding: 24px 22px;
-      box-shadow: 0 20px 45px rgba(50, 65, 55, 0.12), 0 2px 6px rgba(0,0,0,0.04);
-    }
+  /* Komorebi = sunlight filtering through trees */
+  .ray {
+    position: absolute; top: -25%;
+    width: clamp(70px, 12vw, 150px); height: 150%;
+    background: linear-gradient(180deg, rgba(255,244,200,.38), rgba(255,244,200,0) 75%);
+    transform: rotate(16deg);
+    filter: blur(8px);
+    animation: rayShimmer 9s ease-in-out infinite alternate;
+  }
+  .ray-1 { left: 12%; }
+  .ray-2 { left: 34%; animation-delay: 2.5s; animation-duration: 12s; opacity: .7; }
+  .ray-3 { left: 60%; animation-delay: 5s; opacity: .5; }
+  @keyframes rayShimmer { from { opacity: .25; } to { opacity: .6; } }
 
-    /* Header */
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
+  .dapple {
+    position: absolute; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,240,190,.5), rgba(255,240,190,0) 70%);
+    filter: blur(10px);
+    animation: dappleFloat 11s ease-in-out infinite alternate;
+  }
+  .dapple-1 { width: 220px; height: 220px; bottom: 6%;  left: 12%; }
+  .dapple-2 { width: 160px; height: 160px; bottom: 20%; right: 10%; animation-delay: 3s; }
+  @keyframes dappleFloat { from { transform: translate(0,0) scale(1); } to { transform: translate(18px,-14px) scale(1.12); } }
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+  /* Soot sprites */
+  .soot-sprite {
+    position: absolute;
+    width: 22px; height: 22px;
+    background: #2a2e2d; border-radius: 50%;
+    opacity: .85;
+    box-shadow: 0 0 0 2px rgba(42,46,45,.18);
+    animation: floatSoot 6s infinite ease-in-out;
+  }
+  .soot-sprite::before, .soot-sprite::after {
+    content: ''; position: absolute; top: 6px;
+    width: 5px; height: 5px; background: #fff; border-radius: 50%;
+  }
+  .soot-sprite::before { left: 4px; } .soot-sprite::after { right: 4px; }
+  .soot-eye-dot { position: absolute; top: 7px; width: 2.5px; height: 2.5px; background: #111; border-radius: 50%; }
+  .soot-eye-dot.l { left: 5.5px; } .soot-eye-dot.r { right: 4.5px; }
+  @keyframes floatSoot { 0%,100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-14px) rotate(8deg); } }
 
-    .brand-icon {
-      width: 42px;
-      height: 42px;
-      background: #e8f3e3;
-      border: 2px solid #bcd8b5;
-      border-radius: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-    }
+  /* Falling leaves */
+  .fall-leaf {
+    position: absolute; top: -40px;
+    width: 16px; height: 16px;
+    background: linear-gradient(135deg, #8fbf7f, #5d9159);
+    border-radius: 100% 0 100% 0;
+    opacity: .55;
+    animation: leafFall linear infinite;
+  }
+  .fall-leaf.l1 { left: 16%; animation-duration: 14s; }
+  .fall-leaf.l2 { left: 55%; animation-duration: 19s; animation-delay: 4s; width: 12px; height: 12px; background: linear-gradient(135deg,#e8b96a,#cf8f4a); }
+  .fall-leaf.l3 { left: 82%; animation-duration: 16s; animation-delay: 8s; width: 14px; height: 14px; }
+  @keyframes leafFall {
+    0%   { transform: translate(0,-5vh) rotate(0deg); }
+    50%  { transform: translate(-34px, 50vh) rotate(170deg); }
+    100% { transform: translate(30px, 110vh) rotate(340deg); }
+  }
 
-    .brand-text h1 {
-      font-size: 1.25rem;
-      font-weight: 800;
-      color: var(--ink);
-      line-height: 1.1;
-      letter-spacing: -0.02em;
-    }
+  /* ============================================================
+     APP SHELL
+  ============================================================ */
+  .app-shell {
+    position: relative; z-index: 10;
+    width: 100%; max-width: 460px;
+    background: rgba(253,251,247,.94);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    border: 3px solid #efe7d5;
+    border-radius: clamp(20px, 5vw, 32px);
+    padding: clamp(14px, 4vw, 26px);
+    box-shadow: 0 20px 45px rgba(50,65,55,.14), 0 2px 6px rgba(0,0,0,.04);
+  }
+  .app-shell.session-done .controls { opacity: .35; pointer-events: none; filter: saturate(.6); }
 
-    .brand-text p {
-      font-family: var(--font-hand);
-      font-size: 1.05rem;
-      color: var(--grass-dark);
-      font-weight: 700;
-    }
+  /* ============================================================
+     HEADER
+  ============================================================ */
+  .header { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: clamp(12px, 3vw, 20px); }
+  .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .brand-icon {
+    flex: 0 0 auto;
+    width: clamp(38px, 10vw, 46px); height: clamp(38px, 10vw, 46px);
+    background: #e8f3e3; border: 2px solid #bcd8b5; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: clamp(20px, 5.5vw, 24px);
+  }
+  .brand-text h1 { font-family: var(--font-jp); font-size: clamp(1.1rem, 4.5vw, 1.3rem); font-weight: 500; line-height: 1.1; letter-spacing: .02em; }
+  .brand-text p { font-family: var(--font-hand); font-size: clamp(.95rem, 4vw, 1.1rem); color: var(--grass-dark); font-weight: 700; }
+  .deck-badge {
+    flex: 0 0 auto;
+    display: flex; align-items: center; gap: 5px;
+    padding: 6px 11px;
+    background: var(--paper-cream); border: 1.5px solid #e2d7be; border-radius: 20px;
+    font-size: clamp(.7rem, 3vw, .8rem); font-weight: 700; color: var(--wood);
+    white-space: nowrap;
+  }
 
-    .deck-badge {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 12px;
-      background: var(--paper-cream);
-      border: 1.5px solid #e2d7be;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: var(--wood);
-    }
+  /* ============================================================
+     PROGRESS
+  ============================================================ */
+  .progress-section { margin-bottom: clamp(12px, 3vw, 18px); }
+  .progress-labels {
+    display: flex; justify-content: space-between; align-items: center; gap: 8px;
+    font-size: clamp(.76rem, 3.2vw, .84rem); font-weight: 700; color: var(--ink-soft);
+    margin-bottom: 6px;
+  }
+  .progress-right { display: inline-flex; align-items: center; gap: 8px; }
+  .streak-flame {
+    display: none; align-items: center; gap: 2px;
+    background: #fdeede; border: 1px solid #f4d3a8; border-radius: 12px;
+    padding: 1px 8px; color: var(--calcifer-orange); font-weight: 800;
+  }
+  .streak-flame.pulse { animation: flamePulse .5s cubic-bezier(.3,1.6,.5,1); }
+  @keyframes flamePulse { 0% { transform: scale(.6); } 60% { transform: scale(1.25); } 100% { transform: scale(1); } }
+  .progress-bar-bg { width: 100%; height: 10px; background: #e9e3d3; border-radius: 20px; overflow: hidden; }
+  .progress-bar-fill {
+    width: 0%; height: 100%;
+    background: linear-gradient(90deg, var(--grass-green), #8bc34a);
+    border-radius: 20px;
+    transition: width .45s cubic-bezier(.34,1.56,.64,1);
+  }
 
-    /* Progress & Stats Bar */
-    .progress-section {
-      margin-bottom: 20px;
-    }
+  /* ============================================================
+     CARD STAGE (stack, swipe, 3D flip)
+  ============================================================ */
+  .card-stage {
+    position: relative;
+    perspective: 1400px;
+    width: 100%;
+    height: clamp(300px, 47vh, 470px);
+    height: clamp(300px, 47dvh, 470px);
+    margin-bottom: clamp(12px, 3vw, 20px);
+    cursor: grab;
+    touch-action: pan-y;              /* vertical scroll ok, horizontal = swipe */
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+  .card-stage.dragging { cursor: grabbing; }
 
-    .progress-labels {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: var(--ink-soft);
-      margin-bottom: 6px;
-    }
+  /* paper stack behind the active card */
+  .card-stage::before, .card-stage::after {
+    content: ''; position: absolute; inset: 7px; z-index: 0;
+    border-radius: var(--radius-md);
+    background: #f3ecdd; border: 2px solid #e7dfcf;
+    pointer-events: none;
+  }
+  .card-stage::before { transform: rotate(-2.4deg) translateY(4px); }
+  .card-stage::after  { transform: rotate(1.7deg)  translateY(8px); background: #efe7d3; }
 
-    .progress-bar-bg {
-      width: 100%;
-      height: 10px;
-      background: #e9e3d3;
-      border-radius: 20px;
-      overflow: hidden;
-      position: relative;
-    }
+  .card-swipe {
+    position: relative; z-index: 1;
+    width: 100%; height: 100%;
+    will-change: transform;
+    transition: transform .34s cubic-bezier(.2,.9,.3,1.15), opacity .26s ease;
+  }
+  .card-stage.dragging .card-swipe { transition: none; }
+  .no-anim, .no-anim * { transition: none !important; }
+  .card-swipe.pop-in { animation: popIn .38s cubic-bezier(.2,.9,.3,1.25); }
+  @keyframes popIn { from { transform: translateY(16px) scale(.93); opacity: 0; } to { transform: none; opacity: 1; } }
 
-    .progress-bar-fill {
-      width: 65%;
-      height: 100%;
-      background: linear-gradient(90deg, var(--grass-green), #8bc34a);
-      border-radius: 20px;
-      transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
+  @media (hover: hover) {
+    .card-stage:not(.dragging):hover .card-swipe { transform: translateY(-4px); }
+  }
 
-    /* Flashcard Flip Stage */
-    .card-stage {
-      perspective: 1200px;
-      width: 100%;
-      height: 380px;
-      margin-bottom: 22px;
-      cursor: pointer;
-    }
+  .card-flipper {
+    position: relative; width: 100%; height: 100%;
+    transform-style: preserve-3d;
+    transition: transform .65s cubic-bezier(.2,.8,.2,1);
+    will-change: transform;
+  }
+  .card-stage.flipped .card-flipper { transform: rotateY(180deg); }
 
-    .card-flipper {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      transform-style: preserve-3d;
-      transition: transform 0.65s cubic-bezier(0.2, 0.8, 0.2, 1);
-      border-radius: var(--radius-md);
-    }
+  .card-face {
+    position: absolute; inset: 0;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    border-radius: var(--radius-md);
+    background-color: #fffefb;
+    border: 2px solid #e7dfcf;
+    padding: clamp(12px, 3.5vw, 22px);
+    display: flex; flex-direction: column; justify-content: space-between;
+    box-shadow: var(--shadow-paper);
+    overflow: hidden;
+    background-image:
+      url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2"/><feColorMatrix type="saturate" values="0"/></filter><rect width="120" height="120" filter="url(%23n)" opacity="0.05"/></svg>'),
+      radial-gradient(#ece5d5 .75px, transparent .75px);
+    background-size: 120px 120px, 16px 16px;
+  }
+  .card-face.back { transform: rotateY(180deg); background-color: #fbf9f2; border-color: #dfd4be; }
 
-    .card-stage.flipped .card-flipper {
-      transform: rotateY(180deg);
-    }
+  .card-top-tag { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .tag-pill {
+    font-family: var(--font-hand);
+    font-size: clamp(.92rem, 3.6vw, 1.05rem); font-weight: 700;
+    color: var(--grass-dark); background: #eef6eb; border: 1px solid #c9e2c4;
+    padding: 3px 10px; border-radius: 12px; white-space: nowrap;
+  }
+  .tag-back { background: #fef3e3; border-color: #f4deb8; color: var(--calcifer-orange); }
 
-    .card-face {
-      position: absolute;
-      inset: 0;
-      backface-visibility: hidden;
-      border-radius: var(--radius-md);
-      background: #fffefb;
-      border: 2px solid #e7dfcf;
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      box-shadow: var(--shadow-paper);
-      background-image: radial-gradient(#ece5d5 0.75px, transparent 0.75px);
-      background-size: 16px 16px;
-    }
+  .speak-btn {
+    flex: 0 0 auto;
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    border: 1.5px solid #d9e7ee;
+    background: #f2f8fb;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,.05);
+    transition: transform .15s ease, background .15s ease;
+    touch-action: manipulation;
+  }
+  .speak-btn:hover { background: #e3eff6; transform: scale(1.08); }
+  .speak-btn:active { transform: scale(.94); }
 
-    .card-face.back {
-      transform: rotateY(180deg);
-      background: #fbf9f2;
-      border-color: #dfd4be;
-    }
+  .card-center { text-align: center; margin: auto 0; min-height: 0; }
 
-    /* Card Contents */
-    .card-top-tag {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+  .article-chip {
+    display: inline-block;
+    font-family: var(--font-hand); font-weight: 700;
+    font-size: clamp(.95rem, 3.8vw, 1.1rem);
+    padding: 2px 14px; border-radius: 14px; border: 1.5px solid;
+    margin-bottom: clamp(4px, 1.5vw, 8px);
+  }
+  .chip-der  { color: #3f7d99; background: #e9f4f9; border-color: #bcdcea; }
+  .chip-die  { color: #b4546a; background: #fbeef1; border-color: #f0cdd6; }
+  .chip-das  { color: var(--grass-dark); background: #eef6eb; border-color: #c9e2c4; }
+  .chip-verb { color: #b0772a; background: #fdf4e2; border-color: #f0d9ab; }
 
-    .tag-pill {
-      font-family: var(--font-hand);
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: var(--grass-dark);
-      background: #eef6eb;
-      border: 1px solid #c9e2c4;
-      padding: 3px 10px;
-      border-radius: 12px;
-    }
+  .main-word {
+    font-weight: 800;
+    font-size: clamp(2.1rem, 9vw, 3.1rem);
+    letter-spacing: .01em; line-height: 1.08;
+    overflow-wrap: anywhere;
+    margin-bottom: 4px;
+  }
+  .main-word.word-long { font-size: clamp(1.55rem, 7vw, 2.3rem); }
+  .word-forms { font-size: clamp(.82rem, 3.4vw, .95rem); color: var(--ink-soft); font-weight: 700; letter-spacing: .04em; }
+  .tap-hint { margin-top: clamp(8px, 2.5vw, 14px); font-size: clamp(.72rem, 3vw, .8rem); color: var(--ink-muted); font-weight: 700; }
 
-    .hint-btn {
-      font-size: 0.8rem;
-      color: var(--ink-muted);
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
+  .illustration-box {
+    width: clamp(58px, 16vw, 88px); height: clamp(58px, 16vw, 88px);
+    margin: 0 auto clamp(8px, 2vw, 14px);
+    background: #f2f7ef; border: 2px dashed #bdd8b3; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: clamp(30px, 9vw, 44px);
+    box-shadow: inset 0 2px 6px rgba(0,0,0,.04);
+  }
+  .meaning-english { font-size: clamp(1.25rem, 5.5vw, 1.65rem); font-weight: 800; margin-bottom: clamp(6px, 2vw, 10px); }
+  .card-quote {
+    font-style: italic;
+    font-size: clamp(.78rem, 3.3vw, .92rem);
+    color: var(--ink-soft); line-height: 1.4;
+    max-width: 300px; margin: 0 auto;
+    background: #f3efe6; padding: 8px 14px;
+    border-radius: 12px; border-left: 3px solid var(--sun-gold);
+  }
+  .card-quote small { color: var(--ink-muted); font-style: normal; }
+  .film-ref {
+    display: inline-block; margin-top: clamp(6px, 2vw, 10px);
+    font-size: clamp(.68rem, 2.8vw, .76rem); font-weight: 700; color: var(--wood);
+    background: var(--paper-cream); border: 1px solid #e6dcc4;
+    padding: 3px 10px; border-radius: 12px;
+  }
 
-    .card-center {
-      text-align: center;
-      margin: auto 0;
-    }
+  .card-footer-tip {
+    text-align: center;
+    font-size: clamp(.72rem, 3vw, .8rem); color: var(--ink-muted); font-weight: 600;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    min-height: 1.2em;
+  }
+  .leaf-deco { display: inline-block; animation: sway 3s ease-in-out infinite alternate; }
+  @keyframes sway { from { transform: rotate(-6deg); } to { transform: rotate(10deg); } }
 
-    .main-kanji {
-      font-family: var(--font-jp);
-      font-size: 3.8rem;
-      color: var(--ink);
-      font-weight: 500;
-      letter-spacing: 0.05em;
-      line-height: 1.1;
-      margin-bottom: 4px;
-    }
+  /* Swipe indicators */
+  .swipe-ind {
+    position: absolute; top: 14px; z-index: 7;
+    padding: 6px 14px; border-radius: 14px;
+    font-family: var(--font-hand); font-weight: 700; font-size: 1.05rem;
+    opacity: 0; pointer-events: none;
+    transition: opacity .12s linear;
+    border: 2px solid;
+  }
+  .swipe-ind.left  { left: 12px;  transform: rotate(-8deg); color: var(--terracotta); background: #fdf0ec; border-color: #f0c4b8; }
+  .swipe-ind.right { right: 12px; transform: rotate(8deg);  color: var(--grass-dark); background: #eef7ea; border-color: #c3e0bd; }
 
-    .furigana {
-      font-family: var(--font-jp);
-      font-size: 1.2rem;
-      color: var(--terracotta);
-      font-weight: 400;
-      margin-bottom: 12px;
-    }
+  /* ============================================================
+     SRS CONTROLS — 48px+ touch targets
+  ============================================================ */
+  .controls {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: clamp(6px, 2vw, 10px);
+  }
+  .review-btn {
+    border: 2px solid transparent; background: #fff;
+    padding: 10px 4px;
+    min-height: 54px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+    transition: transform .15s ease, background .15s ease, box-shadow .15s ease;
+    box-shadow: 0 3px 6px rgba(0,0,0,.05);
+    touch-action: manipulation;
+  }
+  .review-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,.08); }
+  .review-btn:active { transform: translateY(2px) scale(.97); }
+  .btn-label { font-size: clamp(.76rem, 3.4vw, .86rem); font-weight: 800; }
+  .btn-time  { font-size: clamp(.62rem, 2.8vw, .7rem); color: var(--ink-muted); font-weight: 600; }
+  .btn-again { border-color: #f7d5cc; color: var(--terracotta);      background: #fdf5f3; }
+  .btn-again:hover { background: #fae8e3; }
+  .btn-hard  { border-color: #fae4be; color: var(--calcifer-orange);  background: #fdf9f0; }
+  .btn-hard:hover  { background: #fbf0dc; }
+  .btn-good  { border-color: #cde6c7; color: var(--grass-dark);       background: #f3f9f1; }
+  .btn-good:hover  { background: #e5f3e1; }
+  .btn-easy  { border-color: #cde4ee; color: var(--water-blue);       background: #f3f8fb; }
+  .btn-easy:hover  { background: #e2f0f7; }
 
-    .reading-romaji {
-      font-size: 0.95rem;
-      color: var(--ink-soft);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      font-weight: 700;
-    }
+  .kbd-hint {
+    display: none;
+    margin-top: 10px; text-align: center;
+    font-size: .74rem; color: var(--ink-muted); font-weight: 600;
+  }
+  .kbd-hint kbd {
+    background: #f0ebdd; border: 1px solid #ddd2ba; border-bottom-width: 2px;
+    border-radius: 6px; padding: 1px 6px; font-family: inherit; font-weight: 700; color: var(--ink-soft);
+  }
 
-    .illustration-box {
-      width: 90px;
-      height: 90px;
-      margin: 0 auto 16px;
-      background: #f2f7ef;
-      border: 2px dashed #bdd8b3;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 44px;
-      box-shadow: inset 0 2px 6px rgba(0,0,0,0.03);
-    }
+  /* ============================================================
+     FOOTER UTILITY BAR
+  ============================================================ */
+  .sub-bar {
+    display: flex; justify-content: space-around; gap: 6px;
+    margin-top: clamp(12px, 3vw, 18px);
+    padding-top: clamp(10px, 2.5vw, 14px);
+    border-top: 1.5px dashed #e4dcce;
+  }
+  .sub-item {
+    flex: 1;
+    min-height: 44px;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    font-size: clamp(.74rem, 3.2vw, .84rem); font-weight: 700; color: var(--ink-soft);
+    background: none; border: none; border-radius: 10px;
+    cursor: pointer;
+    transition: color .15s, background .15s;
+    touch-action: manipulation;
+  }
+  .sub-item:hover { color: var(--grass-dark); background: #f2f6ee; }
+  .sub-item:active { transform: scale(.96); }
 
-    .meaning-english {
-      font-size: 1.55rem;
-      font-weight: 800;
-      color: var(--ink);
-      margin-bottom: 8px;
-    }
+  /* ============================================================
+     SESSION SUMMARY OVERLAY
+  ============================================================ */
+  .summary {
+    position: absolute; inset: 0; z-index: 6;
+    border-radius: var(--radius-md);
+    background-color: #fffdf6;
+    background-image: radial-gradient(#efe8d6 .75px, transparent .75px);
+    background-size: 16px 16px;
+    border: 2px dashed #d9cbaa;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 20px; gap: 8px;
+    opacity: 0; visibility: hidden; transform: scale(.92);
+    transition: opacity .35s ease, transform .35s cubic-bezier(.2,.9,.3,1.3), visibility .35s;
+  }
+  .summary.show { opacity: 1; visibility: visible; transform: scale(1); }
+  .summary-emoji { font-size: clamp(2.4rem, 10vw, 3.2rem); animation: floatSoot 3.5s ease-in-out infinite; }
+  .summary h2 { font-family: var(--font-hand); font-size: clamp(1.5rem, 6.5vw, 1.9rem); color: var(--grass-dark); }
+  .summary-msg { font-size: clamp(.8rem, 3.4vw, .92rem); color: var(--ink-soft); max-width: 280px; line-height: 1.45; }
+  .summary-stats { display: flex; gap: clamp(10px, 3vw, 18px); margin: 8px 0; }
+  .stat { display: flex; flex-direction: column; }
+  .stat b { font-size: clamp(1.2rem, 5.5vw, 1.5rem); color: var(--ink); }
+  .stat span { font-size: .68rem; font-weight: 700; color: var(--ink-muted); text-transform: uppercase; letter-spacing: .05em; }
+  .restart-btn {
+    margin-top: 6px;
+    min-height: 52px; padding: 0 26px;
+    border: none; border-radius: 26px;
+    background: linear-gradient(135deg, var(--grass-green), var(--grass-dark));
+    color: #fff; font-weight: 800; font-size: .95rem;
+    cursor: pointer;
+    box-shadow: 0 8px 18px -4px rgba(75,122,72,.45);
+    transition: transform .15s ease, box-shadow .15s ease;
+    touch-action: manipulation;
+  }
+  .restart-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 22px -4px rgba(75,122,72,.5); }
+  .restart-btn:active { transform: translateY(1px) scale(.97); }
 
-    .card-quote {
-      font-style: italic;
-      font-size: 0.9rem;
-      color: var(--ink-soft);
-      line-height: 1.4;
-      max-width: 290px;
-      margin: 0 auto;
-      background: #f3efe6;
-      padding: 8px 14px;
-      border-radius: 12px;
-      border-left: 3px solid var(--sun-gold);
-    }
+  .burst-layer { position: absolute; inset: 0; z-index: 8; pointer-events: none; overflow: hidden; border-radius: var(--radius-md); }
+  .burst-layer span { position: absolute; font-size: 20px; }
 
-    .card-footer-tip {
-      text-align: center;
-      font-size: 0.78rem;
-      color: var(--ink-muted);
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-    }
+  /* ============================================================
+     TOAST
+  ============================================================ */
+  .toast {
+    position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom));
+    transform: translate(-50%, 20px);
+    z-index: 100;
+    background: rgba(50,61,56,.94); color: #fdfbf7;
+    font-size: .84rem; font-weight: 700;
+    padding: 10px 18px; border-radius: 24px;
+    box-shadow: 0 10px 24px rgba(0,0,0,.2);
+    opacity: 0; pointer-events: none;
+    transition: opacity .25s ease, transform .25s cubic-bezier(.2,.9,.3,1.2);
+    max-width: min(90vw, 420px); text-align: center;
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-    /* Action Buttons (Spaced Repetition: Again, Hard, Good, Easy) */
-    .controls {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-    }
+  /* ============================================================
+     RESPONSIVE BREAKPOINTS
+  ============================================================ */
+  @media (max-width: 359px) {
+    .brand-text p { display: none; }
+    .controls { gap: 5px; }
+    .review-btn { min-height: 50px; padding: 8px 2px; }
+  }
 
-    .review-btn {
-      border: 2px solid transparent;
-      background: #fff;
-      padding: 10px 4px;
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
-      transition: all 0.18s ease;
-      box-shadow: 0 3px 6px rgba(0,0,0,0.04);
-    }
+  @media (min-width: 600px) {
+    .app-shell { max-width: 500px; }
+  }
 
-    .review-btn:active {
-      transform: translateY(2px);
-    }
+  @media (min-width: 1024px) and (hover: hover) {
+    .app-shell { max-width: 540px; }
+    .card-stage { height: clamp(420px, 52vh, 520px); }
+    .kbd-hint { display: block; }
+    .cloud-1 { width: 480px; height: 160px; }
+    .cloud-2 { width: 560px; height: 200px; }
+  }
 
-    .review-btn .btn-label {
-      font-size: 0.82rem;
-      font-weight: 800;
-    }
+  /* Short viewports (landscape phones, small windows) */
+  @media (max-height: 560px) {
+    .card-stage { height: clamp(200px, 52vh, 300px); }
+    .card-face { padding: 10px 14px; }
+    .illustration-box { width: 44px; height: 44px; font-size: 24px; margin-bottom: 6px; }
+    .meaning-english { font-size: 1.1rem; margin-bottom: 4px; }
+    .card-quote { font-size: .72rem; padding: 5px 10px; }
+    .film-ref { margin-top: 4px; }
+    .main-word { font-size: clamp(1.5rem, 7vh, 2.1rem); }
+    .tap-hint { margin-top: 4px; }
+    .header { margin-bottom: 8px; }
+    .progress-section { margin-bottom: 8px; }
+    .card-stage { margin-bottom: 10px; }
+    .sub-bar { margin-top: 8px; padding-top: 8px; }
+    .sub-item { min-height: 38px; }
+    .review-btn { min-height: 46px; }
+  }
 
-    .review-btn .btn-time {
-      font-size: 0.68rem;
-      color: var(--ink-muted);
-      font-weight: 600;
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: .01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: .15s !important;
     }
-
-    .btn-again {
-      border-color: #f7d5cc;
-      color: var(--terracotta);
-      background: #fdf5f3;
-    }
-    .btn-again:hover { background: #fae8e3; }
-
-    .btn-hard {
-      border-color: #fae4be;
-      color: var(--calcifer-orange);
-      background: #fdf9f0;
-    }
-    .btn-hard:hover { background: #fbf0dc; }
-
-    .btn-good {
-      border-color: #cde6c7;
-      color: var(--grass-dark);
-      background: #f3f9f1;
-    }
-    .btn-good:hover { background: #e5f3e1; }
-
-    .btn-easy {
-      border-color: #cde4ee;
-      color: var(--water-blue);
-      background: #f3f8fb;
-    }
-    .btn-easy:hover { background: #e2f0f7; }
-
-    /* Bottom subtle nav */
-    .sub-bar {
-      display: flex;
-      justify-content: space-around;
-      margin-top: 18px;
-      padding-top: 14px;
-      border-top: 1.5px dashed #e4dcce;
-    }
-
-    .sub-item {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: var(--ink-soft);
-      cursor: pointer;
-      transition: color 0.15s;
-    }
-
-    .sub-item:hover {
-      color: var(--grass-dark);
-    }
-
-    .leaf-deco {
-      display: inline-block;
-      animation: sway 3s ease-in-out infinite alternate;
-    }
-
-    @keyframes sway {
-      0% { transform: rotate(-6deg); }
-      100% { transform: rotate(10deg); }
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
 
-  <!-- Ambient Cloud & Soot Sprites -->
-  <div class="cloud cloud-1"></div>
-  <div class="cloud cloud-2"></div>
-  <div class="cloud cloud-3"></div>
-
-  <div class="soot-sprite" style="top: 14%; left: 8%;">
-    <span class="soot-eye-dot l"></span>
-    <span class="soot-eye-dot r"></span>
-  </div>
-  <div class="soot-sprite" style="bottom: 22%; right: 9%; animation-delay: 2.2s; width: 18px; height: 18px;">
-    <span class="soot-eye-dot l" style="top: 5px; left: 3px;"></span>
-    <span class="soot-eye-dot r" style="top: 5px; right: 3px;"></span>
+  <!-- Ambient Ghibli backdrop -->
+  <div class="ambient" aria-hidden="true">
+    <div class="cloud cloud-1"></div>
+    <div class="cloud cloud-2"></div>
+    <div class="cloud cloud-3"></div>
+    <div class="ray ray-1"></div>
+    <div class="ray ray-2"></div>
+    <div class="ray ray-3"></div>
+    <div class="dapple dapple-1"></div>
+    <div class="dapple dapple-2"></div>
+    <div class="fall-leaf l1"></div>
+    <div class="fall-leaf l2"></div>
+    <div class="fall-leaf l3"></div>
+    <div class="soot-sprite" style="top:14%; left:8%;">
+      <span class="soot-eye-dot l"></span><span class="soot-eye-dot r"></span>
+    </div>
+    <div class="soot-sprite" style="bottom:22%; right:9%; animation-delay:2.2s; width:18px; height:18px;">
+      <span class="soot-eye-dot l" style="top:5px; left:3px;"></span>
+      <span class="soot-eye-dot r" style="top:5px; right:3px;"></span>
+    </div>
+    <div class="soot-sprite" style="top:55%; left:4%; animation-delay:4s; width:14px; height:14px; opacity:.6;">
+      <span class="soot-eye-dot l" style="top:4px; left:2px;"></span>
+      <span class="soot-eye-dot r" style="top:4px; right:2px;"></span>
+    </div>
   </div>
 
   <!-- Main Flashcard Application Shell -->
-  <div class="app-shell">
-    
-    <!-- Header -->
+  <main class="app-shell" id="appShell">
+
     <header class="header">
       <div class="brand">
         <div class="brand-icon">🍃</div>
@@ -488,160 +581,547 @@
       </div>
       <div class="deck-badge">
         <span>🌱</span>
-        <span>Forest N5 (13/20)</span>
+        <span id="deckCount">Deutsch A1 · 0/12</span>
       </div>
     </header>
 
-    <!-- Progress -->
-    <div class="progress-section">
+    <section class="progress-section" aria-label="Lernfortschritt">
       <div class="progress-labels">
-        <span>Today's Journey</span>
-        <span>65% mastered</span>
+        <span>🌿 Heutige Reise</span>
+        <span class="progress-right">
+          <span class="streak-flame" id="streakFlame">🔥&nbsp;<b id="streakCount">0</b></span>
+          <span id="progressRight">0/12 gemeistert</span>
+        </span>
       </div>
       <div class="progress-bar-bg">
         <div class="progress-bar-fill" id="progressBar"></div>
       </div>
-    </div>
+    </section>
 
-    <!-- Flashcard Stage (Interactive Flip) -->
-    <div class="card-stage" id="flashcardStage" onclick="toggleFlip()">
-      <div class="card-flipper">
-        
-        <!-- FRONT FACE -->
-        <div class="card-face front">
-          <div class="card-top-tag">
-            <span class="tag-pill">Vocabulary • N5</span>
-            <span class="hint-btn">✨ Tap to reveal</span>
+    <!-- Flashcard Stage: tap to flip, swipe ← again / → good -->
+    <section class="card-stage" id="flashcardStage" role="button" tabindex="0"
+             aria-label="Karteikarte. Tippen zum Umdrehen, wischen zum Bewerten." aria-pressed="false">
+
+      <div class="swipe-ind left"  id="indLeft">↩ Nochmal</div>
+      <div class="swipe-ind right" id="indRight">Gut ✓</div>
+
+      <div class="card-swipe" id="cardSwipe">
+        <div class="card-flipper">
+
+          <!-- FRONT -->
+          <div class="card-face front">
+            <div class="card-top-tag">
+              <span class="tag-pill" id="frontTag">Nomen • A1</span>
+              <button type="button" class="speak-btn" id="speakFront" aria-label="Wort anhören">🔊</button>
+            </div>
+            <div class="card-center">
+              <span class="article-chip chip-der" id="articleChip">der</span>
+              <div class="main-word" id="mainWord" lang="de">Wind</div>
+              <div class="word-forms" id="wordForms">Plural: die Winde</div>
+              <div class="tap-hint">✨ Zum Aufdecken tippen</div>
+            </div>
+            <div class="card-footer-tip">
+              <span class="leaf-deco">🍂</span>
+              <span id="frontWhisper" lang="de">Hörst du die Brise in der Wiese?</span>
+            </div>
           </div>
 
-          <div class="card-center">
-            <div class="main-kanji">風</div>
-            <div class="furigana">かぜ</div>
-            <div class="reading-romaji">kaze</div>
+          <!-- BACK -->
+          <div class="card-face back">
+            <div class="card-top-tag">
+              <span class="tag-pill tag-back">Bedeutung &amp; Kontext</span>
+              <button type="button" class="speak-btn" id="speakBack" aria-label="Beispielsatz anhören">🗣️</button>
+            </div>
+            <div class="card-center">
+              <div class="illustration-box" id="backIcon">🎐</div>
+              <div class="meaning-english" id="backMeaning">wind</div>
+              <p class="card-quote">
+                <span lang="de" id="backSentence">„Der Wind erhebt sich, wir müssen versuchen zu leben."</span><br>
+                <small id="backSentenceEn">The wind is rising; we must try to live.</small>
+              </p>
+              <span class="film-ref" id="backFilm">🎬 Wie der Wind sich hebt</span>
+            </div>
+            <div class="card-footer-tip">
+              <span>🌿</span><span>Wischen: ← nochmal · gut →</span>
+            </div>
           </div>
 
-          <div class="card-footer-tip">
-            <span class="leaf-deco">🍂</span> "Listen closely to the breeze in the meadow..."
-          </div>
         </div>
-
-        <!-- BACK FACE -->
-        <div class="card-face back">
-          <div class="card-top-tag">
-            <span class="tag-pill" style="background:#fef3e3; border-color:#f4deb8; color:var(--calcifer-orange);">Meaning & Context</span>
-            <span class="hint-btn">🔄 Flip back</span>
-          </div>
-
-          <div class="card-center">
-            <div class="illustration-box">🎐</div>
-            <div class="meaning-english">Wind / Breeze</div>
-            <p class="card-quote">
-              "The wind rises! We must try to live."<br>
-              <small style="color:var(--ink-muted);">風立ちぬ (Kaze Tachinu)</small>
-            </p>
-          </div>
-
-          <div class="card-footer-tip">
-            <span>🌿</span> Example: 優しい風 (A gentle wind)
-          </div>
-        </div>
-
       </div>
-    </div>
+
+      <!-- Session summary -->
+      <div class="summary" id="summary" aria-hidden="true">
+        <div class="summary-emoji">🌸</div>
+        <h2>Runde geschafft!</h2>
+        <p class="summary-msg">Du bist durch den Wald gewandert und hast den Weg gefunden. Totoro wäre stolz auf dich.</p>
+        <div class="summary-stats">
+          <div class="stat"><b id="sumReviewed">0</b><span>bewertet</span></div>
+          <div class="stat"><b id="sumAgain">0</b><span>nochmal</span></div>
+          <div class="stat"><b id="sumStreak">0</b><span>Streak</span></div>
+        </div>
+        <button type="button" class="restart-btn" id="btnRestart">↻ Noch einmal wandern</button>
+      </div>
+      <div class="burst-layer" id="burstLayer"></div>
+    </section>
 
     <!-- SRS Controls -->
     <div class="controls">
-      <button class="review-btn btn-again" onclick="nextCard('again')">
-        <span class="btn-label">Again</span>
-        <span class="btn-time">&lt; 1 min</span>
+      <button type="button" class="review-btn btn-again" data-grade="again" aria-label="Nochmal — Karte wiederholen">
+        <span class="btn-label">Again</span><span class="btn-time">&lt; 1 Min</span>
       </button>
-      <button class="review-btn btn-hard" onclick="nextCard('hard')">
-        <span class="btn-label">Hard</span>
-        <span class="btn-time">12 hrs</span>
+      <button type="button" class="review-btn btn-hard" data-grade="hard" aria-label="Schwer">
+        <span class="btn-label">Hard</span><span class="btn-time">12 Std</span>
       </button>
-      <button class="review-btn btn-good" onclick="nextCard('good')">
-        <span class="btn-label">Good</span>
-        <span class="btn-time">2 days</span>
+      <button type="button" class="review-btn btn-good" data-grade="good" aria-label="Gut">
+        <span class="btn-label">Good</span><span class="btn-time">2 Tage</span>
       </button>
-      <button class="review-btn btn-easy" onclick="nextCard('easy')">
-        <span class="btn-label">Easy</span>
-        <span class="btn-time">5 days</span>
+      <button type="button" class="review-btn btn-easy" data-grade="easy" aria-label="Leicht">
+        <span class="btn-label">Easy</span><span class="btn-time">5 Tage</span>
       </button>
     </div>
 
-    <!-- Bottom utility nav -->
+    <div class="kbd-hint"><kbd>Space</kbd> umdrehen · <kbd>1–4</kbd> bewerten · <kbd>←</kbd><kbd>→</kbd> wischen · <kbd>S</kbd> Aussprache</div>
+
     <footer class="sub-bar">
-      <div class="sub-item"><span>🎒</span> Deck Library</div>
-      <div class="sub-item"><span>🍄</span> Garden Stats</div>
-      <div class="sub-item"><span>📻</span> Sound on</div>
+      <button type="button" class="sub-item" id="btnDeck"><span>🎒</span> Decks</button>
+      <button type="button" class="sub-item" id="btnStats"><span>🍄</span> Stats</button>
+      <button type="button" class="sub-item" id="btnSound"><span id="soundIcon">🔊</span> <span id="soundLabel">Sound an</span></button>
     </footer>
 
-  </div>
+  </main>
 
-  <script>
-    function toggleFlip() {
-      const stage = document.getElementById('flashcardStage');
-      stage.classList.toggle('flipped');
-    }
+  <div class="toast" id="toast" role="status"></div>
+  <div class="sr-only" aria-live="polite" id="liveRegion"></div>
 
-    const cards = [
-      {
-        kanji: "風",
-        furigana: "かぜ",
-        romaji: "kaze",
-        icon: "🎐",
-        meaning: "Wind / Breeze",
-        quote: "The wind rises! We must try to live.",
-        ref: "風立ちぬ (The Wind Rises)",
-        tag: "Vocabulary • N5",
-        example: "優しい風 (A gentle wind)"
-      },
-      {
-        kanji: "森",
-        furigana: "もり",
-        romaji: "mori",
-        icon: "🌲",
-        meaning: "Forest / Woods",
-        quote: "The spirits of the forest are always watching over us.",
-        ref: "もののけ姫 (Princess Mononoke)",
-        tag: "Nature • N5",
-        example: "深い森 (A deep forest)"
-      },
-      {
-        kanji: "旅",
-        furigana: "たび",
-        romaji: "tabi",
-        icon: "🚂",
-        meaning: "Journey / Travel",
-        quote: "Once you meet someone, you never really forget them.",
-        ref: "千と千尋の神隠し (Spirited Away)",
-        tag: "Concepts • N4",
-        example: "列車の旅 (A train journey)"
+<script>
+(function () {
+  'use strict';
+
+  /* ============================================================
+     DATA — German deck with Ghibli soul
+  ============================================================ */
+  const DECK = [
+    { id:1,  article:'der', word:'Wind',    forms:'Plural: die Winde',      pos:'Nomen', level:'A1', icon:'🎐', en:'wind',
+      sentence:'Der Wind erhebt sich, wir müssen versuchen zu leben.', sentenceEn:'The wind is rising; we must try to live.',
+      film:'Wie der Wind sich hebt', whisper:'Hörst du die Brise in der Wiese?' },
+    { id:2,  article:'der', word:'Wald',    forms:'Plural: die Wälder',     pos:'Nomen', level:'A1', icon:'🌲', en:'forest',
+      sentence:'Die Geister des Waldes wachen über uns.', sentenceEn:'The spirits of the forest watch over us.',
+      film:'Prinzessin Mononoke', whisper:'Etwas raschelt zwischen den Bäumen …' },
+    { id:3,  article:'die', word:'Reise',   forms:'Plural: die Reisen',     pos:'Nomen', level:'A2', icon:'🚂', en:'journey',
+      sentence:'Chihiros Reise beginnt in einer geheimnisvollen Stadt.', sentenceEn:"Chihiro's journey begins in a mysterious town.",
+      film:'Chihiros Reise ins Zauberland', whisper:'Schnapp dir dein Ticket, gleich geht’s los.' },
+    { id:4,  article:'das', word:'Schloss', forms:'Plural: die Schlösser',  pos:'Nomen', level:'A2', icon:'🏰', en:'castle',
+      sentence:'Das wandelnde Schloss stapft über die Berge.', sentenceEn:'The moving castle trudges across the mountains.',
+      film:'Das wandelnde Schloss', whisper:'Es stapft, es dampft, es wandert …' },
+    { id:5,  article:'das', word:'Feuer',   forms:'Plural: die Feuer',      pos:'Nomen', level:'A1', icon:'🔥', en:'fire',
+      sentence:'Calcifer, das Feuer, hält das Schloss am Laufen.', sentenceEn:'Calcifer the fire keeps the castle running.',
+      film:'Das wandelnde Schloss', whisper:'Knister, knister — wer spricht denn da?' },
+    { id:6,  article:'der', word:'Regen',   forms:'kein Plural',            pos:'Nomen', level:'A1', icon:'🌧️', en:'rain',
+      sentence:'Totoro wartet im Regen an der Bushaltestelle.', sentenceEn:'Totoro waits in the rain at the bus stop.',
+      film:'Mein Nachbar Totoro', whisper:'Vergiss deinen Regenschirm nicht!' },
+    { id:7,  article:'die', word:'Katze',   forms:'Plural: die Katzen',     pos:'Nomen', level:'A1', icon:'🐈‍⬛', en:'cat',
+      sentence:'Die Katze Jiji begleitet Kiki auf jedem Flug.', sentenceEn:'Jiji the cat joins Kiki on every flight.',
+      film:'Kikis kleiner Lieferservice', whisper:'Miau! Jiji hat immer einen Kommentar.' },
+    { id:8,  article:'das', word:'Meer',    forms:'Plural: die Meere',      pos:'Nomen', level:'A1', icon:'🌊', en:'sea',
+      sentence:'Ponyo springt über die Wellen des Meeres.', sentenceEn:'Ponyo leaps across the waves of the sea.',
+      film:'Ponyo – Das große Abenteuer am Meer', whisper:'Wellen, Schinken und ein kleiner Fisch.' },
+    { id:9,  article:'der', word:'Zug',     forms:'Plural: die Züge',       pos:'Nomen', level:'A1', icon:'🚃', en:'train',
+      sentence:'Der Zug gleitet leise über das stille Wasser.', sentenceEn:'The train glides quietly over the still water.',
+      film:'Chihiros Reise ins Zauberland', whisper:'Bitte einsteigen — Richtung Geisterwelt.' },
+    { id:10, article:'verb', word:'fliegen', forms:'flog · ist geflogen',   pos:'Verb',  level:'A1', icon:'🧹', en:'to fly',
+      sentence:'Kiki fliegt auf ihrem Besen über die Dächer.', sentenceEn:'Kiki flies on her broom over the rooftops.',
+      film:'Kikis kleiner Lieferservice', whisper:'Besen bereit? Abheben!' },
+    { id:11, article:'der', word:'Stern',   forms:'Plural: die Sterne',     pos:'Nomen', level:'A1', icon:'⭐', en:'star',
+      sentence:'Ein fallender Stern landet in Howls Händen.', sentenceEn:"A falling star lands in Howl's hands.",
+      film:'Das wandelnde Schloss', whisper:'Wünsch dir was, wenn er fällt.' },
+    { id:12, article:'das', word:'Licht',   forms:'Plural: die Lichter',    pos:'Nomen', level:'A1', icon:'🏮', en:'light',
+      sentence:'Die Lichter der Geisterwelt gehen bei Dämmerung an.', sentenceEn:'The lights of the spirit world come on at dusk.',
+      film:'Chihiros Reise ins Zauberland', whisper:'Folge den Laternen in der Dämmerung.' }
+  ];
+
+  /* ============================================================
+     DOM REFS
+  ============================================================ */
+  const $ = id => document.getElementById(id);
+  const shell = $('appShell'), stage = $('flashcardStage'), swipeEl = $('cardSwipe');
+  const frontTag = $('frontTag'), articleChip = $('articleChip'), mainWord = $('mainWord'),
+        wordForms = $('wordForms'), frontWhisper = $('frontWhisper');
+  const backIcon = $('backIcon'), backMeaning = $('backMeaning'), backSentence = $('backSentence'),
+        backSentenceEn = $('backSentenceEn'), backFilm = $('backFilm');
+  const progressBar = $('progressBar'), progressRight = $('progressRight'), deckCount = $('deckCount');
+  const streakFlame = $('streakFlame'), streakCount = $('streakCount');
+  const indLeft = $('indLeft'), indRight = $('indRight');
+  const summary = $('summary'), burstLayer = $('burstLayer'), toastEl = $('toast'), liveRegion = $('liveRegion');
+
+  /* ============================================================
+     STATE
+  ============================================================ */
+  let queue = [], currentCard = null, flipped = false;
+  let completed = new Set(), results = { again:0, hard:0, good:0, easy:0 };
+  let streak = 0, bestStreak = 0;
+  let sessionDone = false, advancing = false, userInteracted = false;
+
+  /* ============================================================
+     AUDIO — Web Audio API synth (no external files)
+  ============================================================ */
+  const AudioEngine = (() => {
+    let ctx = null, master = null, enabled = true;
+    function ensure() {
+      if (!ctx) {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return null;
+        ctx = new AC();
+        master = ctx.createGain();
+        master.gain.value = 0.5;
+        master.connect(ctx.destination);
       }
-    ];
-
-    let currentIndex = 0;
-
-    function nextCard(type) {
-      const stage = document.getElementById('flashcardStage');
-      stage.classList.remove('flipped');
-      
-      setTimeout(() => {
-        currentIndex = (currentIndex + 1) % cards.length;
-        const card = cards[currentIndex];
-
-        // Front
-        document.querySelector('.front .main-kanji').innerText = card.kanji;
-        document.querySelector('.front .furigana').innerText = card.furigana;
-        document.querySelector('.front .reading-romaji').innerText = card.romaji;
-        
-        // Back
-        document.querySelector('.back .illustration-box').innerText = card.icon;
-        document.querySelector('.back .meaning-english').innerText = card.meaning;
-        document.querySelector('.back .card-quote').innerHTML = `"${card.quote}"<br><small style="color:var(--ink-muted);">${card.ref}</small>`;
-        document.querySelector('.back .card-footer-tip').innerHTML = `<span>🌿</span> Example: ${card.example}`;
-      }, 200);
+      if (ctx.state === 'suspended') ctx.resume();
+      return ctx;
     }
-  </script>
+    function tone(o) {
+      if (!enabled || !ensure()) return;
+      const { freq=440, freqEnd=null, type='sine', dur=0.15, vol=0.18, delay=0 } = o;
+      const t0 = ctx.currentTime + delay;
+      const osc = ctx.createOscillator(), g = ctx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, t0);
+      if (freqEnd) osc.frequency.exponentialRampToValueAtTime(freqEnd, t0 + dur);
+      g.gain.setValueAtTime(0.0001, t0);
+      g.gain.linearRampToValueAtTime(vol, t0 + 0.012);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+      osc.connect(g); g.connect(master);
+      osc.start(t0); osc.stop(t0 + dur + 0.05);
+    }
+    function whoosh(dur, vol) {
+      if (!enabled || !ensure()) return;
+      const t0 = ctx.currentTime;
+      const len = Math.floor(ctx.sampleRate * dur);
+      const buf = ctx.createBuffer(1, len, ctx.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / len);
+      const src = ctx.createBufferSource(); src.buffer = buf;
+      const f = ctx.createBiquadFilter(); f.type = 'bandpass'; f.Q.value = 1.1;
+      f.frequency.setValueAtTime(480, t0);
+      f.frequency.exponentialRampToValueAtTime(1700, t0 + dur);
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(vol, t0);
+      g.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+      src.connect(f); f.connect(g); g.connect(master);
+      src.start(t0);
+    }
+    const P = {
+      flip()    { whoosh(0.16, 0.22); },
+      tap()     { tone({ freq: 720, dur: 0.05, vol: 0.06 }); },
+      again()   { tone({ freq: 330, freqEnd: 235, type: 'triangle', dur: 0.22, vol: 0.16 }); },
+      hard()    { tone({ freq: 392, type: 'triangle', dur: 0.13, vol: 0.15 }); tone({ freq: 494, type: 'triangle', dur: 0.16, vol: 0.13, delay: 0.07 }); },
+      good()    { tone({ freq: 523, dur: 0.13, vol: 0.17 }); tone({ freq: 659, dur: 0.2, vol: 0.15, delay: 0.08 }); },
+      easy()    { tone({ freq: 523, dur: 0.11, vol: 0.15 }); tone({ freq: 659, dur: 0.11, vol: 0.15, delay: 0.07 }); tone({ freq: 784, dur: 0.22, vol: 0.15, delay: 0.14 }); },
+      streak()  { [880, 1109, 1319].forEach((f, i) => tone({ freq: f, dur: 0.12, vol: 0.11, delay: i * 0.05 })); },
+      complete(){ [523, 587, 659, 784, 880, 1047].forEach((f, i) => tone({ freq: f, type: 'triangle', dur: 0.24, vol: 0.15, delay: i * 0.09 })); }
+    };
+    return {
+      play(name) { if (enabled && P[name]) { try { P[name](); } catch (e) {} } },
+      toggle()   { enabled = !enabled; return enabled; },
+      unlock()   { try { ensure(); } catch (e) {} },
+      get enabled() { return enabled; }
+    };
+  })();
+
+  const buzz = p => { try { if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} };
+
+  /* ============================================================
+     SPEECH — Web Speech API, de-DE with graceful fallback
+  ============================================================ */
+  let deVoice = null;
+  function refreshVoices() {
+    if (!('speechSynthesis' in window)) return;
+    try {
+      const vs = speechSynthesis.getVoices();
+      deVoice = vs.find(v => /^de[-_]DE/i.test(v.lang)) || vs.find(v => /^de/i.test(v.lang)) || null;
+    } catch (e) {}
+  }
+  if ('speechSynthesis' in window) {
+    refreshVoices();
+    window.speechSynthesis.onvoiceschanged = refreshVoices;
+  }
+  function speakGerman(text) {
+    if (!('speechSynthesis' in window) || !AudioEngine.enabled || !text) return;
+    try {
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = 'de-DE';                 // requested language…
+      if (deVoice) u.voice = deVoice;   // …best German voice if installed, else engine default fallback
+      u.rate = 0.92; u.pitch = 1.02;
+      speechSynthesis.speak(u);
+    } catch (e) {}
+  }
+  const speakWord = () => currentCard && speakGerman(currentCard.article === 'verb' ? currentCard.word : `${currentCard.article} ${currentCard.word}`);
+  const speakSentence = () => currentCard && speakGerman(currentCard.sentence);
+
+  /* ============================================================
+     HELPERS
+  ============================================================ */
+  function shuffle(a) {
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+  let toastTimer;
+  function toast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2200);
+  }
+  function live(msg) { liveRegion.textContent = msg; }
+
+  /* ============================================================
+     RENDERING
+  ============================================================ */
+  function renderCard(c) {
+    frontTag.textContent = `${c.pos} • ${c.level}`;
+    articleChip.textContent = c.article === 'verb' ? 'Verb' : c.article;
+    articleChip.className = 'article-chip chip-' + c.article;
+    mainWord.textContent = c.word;
+    mainWord.classList.toggle('word-long', c.word.length > 10);
+    wordForms.textContent = c.forms;
+    frontWhisper.textContent = c.whisper;
+    backIcon.textContent = c.icon;
+    backMeaning.textContent = c.en;
+    backSentence.textContent = '„' + c.sentence + '“';
+    backSentenceEn.textContent = c.sentenceEn;
+    backFilm.textContent = '🎬 ' + c.film;
+    live(`Neue Karte: ${c.article === 'verb' ? c.word : c.article + ' ' + c.word}`);
+  }
+
+  function updateHUD() {
+    const pct = Math.round(completed.size / DECK.length * 100);
+    progressBar.style.width = pct + '%';
+    progressRight.textContent = `${completed.size}/${DECK.length} gemeistert`;
+    deckCount.textContent = `Deutsch A1 · ${completed.size}/${DECK.length}`;
+    streakFlame.style.display = streak > 0 ? 'inline-flex' : 'none';
+    streakCount.textContent = streak;
+    if (streak > 0) {
+      streakFlame.classList.remove('pulse');
+      void streakFlame.offsetWidth;
+      streakFlame.classList.add('pulse');
+    }
+  }
+
+  function toggleFlip() {
+    if (sessionDone || advancing) return;
+    flipped = !flipped;
+    stage.classList.toggle('flipped', flipped);
+    stage.setAttribute('aria-pressed', String(flipped));
+    AudioEngine.play('flip');
+    buzz(8);
+    live(flipped ? 'Karte umgedreht: Bedeutung sichtbar.' : 'Karte umgedreht: Vorderseite sichtbar.');
+  }
+
+  /* ============================================================
+     SWIPE / DRAG GESTURES (Pointer Events, touch + mouse)
+  ============================================================ */
+  let drag = null;
+  const threshold = () => Math.min(110, stage.offsetWidth * 0.28);
+
+  function updateIndicators(dx) {
+    const th = threshold();
+    indLeft.style.opacity  = dx < 0 ? Math.min(1, -dx / th) : 0;
+    indRight.style.opacity = dx > 0 ? Math.min(1,  dx / th) : 0;
+  }
+  function hideIndicators() { indLeft.style.opacity = 0; indRight.style.opacity = 0; }
+
+  stage.addEventListener('pointerdown', e => {
+    if (e.target.closest('.speak-btn') || sessionDone || advancing) return;
+    drag = { id: e.pointerId, x0: e.clientX, y0: e.clientY, dx: 0, moved: false, t: Date.now() };
+    try { stage.setPointerCapture(e.pointerId); } catch (err) {}
+  });
+
+  stage.addEventListener('pointermove', e => {
+    if (!drag || e.pointerId !== drag.id) return;
+    drag.dx = e.clientX - drag.x0;
+    const dy = e.clientY - drag.y0;
+    if (!drag.moved && Math.abs(drag.dx) > 8 && Math.abs(drag.dx) > Math.abs(dy)) {
+      drag.moved = true;
+      stage.classList.add('dragging');
+    }
+    if (drag.moved) {
+      swipeEl.style.transform = `translateX(${drag.dx}px) rotate(${drag.dx / 16}deg)`;
+      updateIndicators(drag.dx);
+    }
+  });
+
+  function endDrag(e) {
+    if (!drag || (e && e.pointerId !== drag.id)) return;
+    const d = drag; drag = null;
+    stage.classList.remove('dragging');
+    hideIndicators();
+    if (!d.moved) {
+      if (Date.now() - d.t < 600) toggleFlip();   // it was a tap
+      return;
+    }
+    const th = threshold();
+    if (d.dx <= -th)      grade('again');
+    else if (d.dx >= th)  grade('good');
+    else                  swipeEl.style.transform = '';   // spring back
+  }
+  stage.addEventListener('pointerup', endDrag);
+  stage.addEventListener('pointercancel', endDrag);
+
+  /* ============================================================
+     GRADING & SESSION FLOW
+  ============================================================ */
+  function flyOff(dir, cb) {
+    swipeEl.style.transition = 'transform .28s ease-in, opacity .28s ease-in';
+    swipeEl.style.transform = `translateX(${dir * 130}%) rotate(${dir * 16}deg)`;
+    swipeEl.style.opacity = '0';
+    setTimeout(cb, 235);
+  }
+
+  function resetSwipe() {
+    swipeEl.classList.add('no-anim');
+    swipeEl.style.cssText = '';                 // clear inline transition/transform/opacity
+    stage.classList.remove('flipped');
+    stage.setAttribute('aria-pressed', 'false');
+    flipped = false;
+    void swipeEl.offsetWidth;                   // force reflow
+    swipeEl.classList.remove('no-anim');
+    swipeEl.classList.add('pop-in');
+    swipeEl.addEventListener('animationend', () => swipeEl.classList.remove('pop-in'), { once: true });
+  }
+
+  function grade(type) {
+    if (sessionDone || advancing || !currentCard) return;
+    advancing = true;
+    AudioEngine.play(type);
+    buzz(type === 'again' ? 30 : 15);
+    results[type]++;
+
+    if (type === 'again') {
+      streak = 0;
+      queue.splice(Math.min(2, queue.length), 0, currentCard);  // requeue soon
+      toast('🌱 Kommt gleich nochmal — du schaffst das!');
+    } else {
+      streak++;
+      bestStreak = Math.max(bestStreak, streak);
+      completed.add(currentCard.id);
+      if (streak > 0 && streak % 3 === 0) AudioEngine.play('streak');
+    }
+    updateHUD();
+    flyOff(type === 'again' ? -1 : 1, renderNext);
+  }
+
+  function renderNext() {
+    if (queue.length === 0) { completeSession(); return; }
+    currentCard = queue.shift();
+    renderCard(currentCard);
+    resetSwipe();
+    advancing = false;
+    if (userInteracted) speakWord();   // auto-pronounce each new card after first interaction
+  }
+
+  function completeSession() {
+    sessionDone = true;
+    advancing = false;
+    AudioEngine.play('complete');
+    buzz([40, 60, 40]);
+    swipeEl.style.visibility = 'hidden';
+    $('sumReviewed').textContent = results.again + results.hard + results.good + results.easy;
+    $('sumAgain').textContent = results.again;
+    $('sumStreak').textContent = bestStreak;
+    summary.classList.add('show');
+    summary.setAttribute('aria-hidden', 'false');
+    shell.classList.add('session-done');
+    leafBurst();
+    live('Runde geschafft! Alle Karten gemeistert.');
+  }
+
+  function startSession() {
+    queue = shuffle(DECK.slice());
+    completed = new Set();
+    results = { again: 0, hard: 0, good: 0, easy: 0 };
+    streak = 0; bestStreak = 0;
+    sessionDone = false; advancing = false;
+    shell.classList.remove('session-done');
+    summary.classList.remove('show');
+    summary.setAttribute('aria-hidden', 'true');
+    swipeEl.style.visibility = '';
+    updateHUD();
+    renderNext();
+  }
+
+  /* Leaf burst celebration (Web Animations API) */
+  function leafBurst() {
+    const em = ['🍃', '🍂', '🌸', '✨'];
+    for (let i = 0; i < 14; i++) {
+      const s = document.createElement('span');
+      s.textContent = em[i % em.length];
+      s.style.left = '50%'; s.style.top = '42%';
+      burstLayer.appendChild(s);
+      const ang = Math.random() * Math.PI * 2;
+      const dist = 70 + Math.random() * 130;
+      s.animate([
+        { transform: 'translate(-50%,-50%) rotate(0deg)', opacity: 1 },
+        { transform: `translate(calc(-50% + ${Math.cos(ang) * dist}px), calc(-50% + ${Math.sin(ang) * dist - 60}px)) rotate(${(Math.random() * 2 - 1) * 360}deg)`, opacity: 0 }
+      ], { duration: 900 + Math.random() * 600, easing: 'cubic-bezier(.2,.7,.3,1)' })
+      .onfinish = () => s.remove();
+    }
+  }
+
+  /* ============================================================
+     WIRING — buttons, keyboard, footer
+  ============================================================ */
+  document.querySelectorAll('.review-btn').forEach(btn => {
+    btn.addEventListener('click', () => grade(btn.dataset.grade));
+  });
+
+  $('speakFront').addEventListener('click', e => { e.stopPropagation(); AudioEngine.play('tap'); speakWord(); });
+  $('speakBack').addEventListener('click',  e => { e.stopPropagation(); AudioEngine.play('tap'); speakSentence(); });
+
+  $('btnRestart').addEventListener('click', () => { AudioEngine.play('tap'); startSession(); toast('🌱 Neue Runde — viel Spaß!'); });
+  $('btnDeck').addEventListener('click', () => { AudioEngine.play('tap'); startSession(); toast('🎒 Deck neu gemischt!'); });
+  $('btnStats').addEventListener('click', () => {
+    AudioEngine.play('tap');
+    const total = results.again + results.hard + results.good + results.easy;
+    toast(`🍄 ${total} bewertet · ${results.again}× nochmal · bester Streak ${bestStreak}`);
+  });
+  $('btnSound').addEventListener('click', () => {
+    const on = AudioEngine.toggle();
+    $('soundIcon').textContent = on ? '🔊' : '🔇';
+    $('soundLabel').textContent = on ? 'Sound an' : 'Sound aus';
+    if (on) AudioEngine.play('good');
+    if (!on && 'speechSynthesis' in window) speechSynthesis.cancel();
+    toast(on ? '🔊 Sound an' : '🔇 Sound aus');
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.repeat) return;
+    const onBtn = (e.target.tagName || '').toLowerCase() === 'button';
+    switch (e.key) {
+      case ' ':
+      case 'Enter':
+        if (onBtn) return;               // let focused buttons behave natively
+        e.preventDefault(); toggleFlip(); break;
+      case '1': grade('again'); break;
+      case '2': grade('hard');  break;
+      case '3': grade('good');  break;
+      case '4': grade('easy');  break;
+      case 'ArrowLeft':  grade('again'); break;
+      case 'ArrowRight': grade('good');  break;
+      case 's': case 'S': flipped ? speakSentence() : speakWord(); break;
+    }
+  });
+
+  // Unlock audio + enable auto-pronunciation after first user gesture
+  document.addEventListener('pointerdown', () => { userInteracted = true; AudioEngine.unlock(); });
+
+  /* ============================================================
+     GO
+  ============================================================ */
+  startSession();
+})();
+</script>
 </body>
 </html>
