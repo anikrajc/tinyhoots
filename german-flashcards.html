@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Komorebi • Studio Ghibli Flashcards</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Kiwi+Maru:wght@300;400;500&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-sky: #e4f2f7;
+      --bg-meadow: #eaf3e7;
+      --paper: #fdfbf7;
+      --paper-cream: #f6eedb;
+      --card-border: #dcd3c1;
+      --ink: #323d38;
+      --ink-soft: #5b6963;
+      --ink-muted: #8c9a94;
+      --totoro-grey: #7d8b82;
+      --grass-green: #689f63;
+      --grass-dark: #4b7a48;
+      --terracotta: #d9745b;
+      --sun-gold: #f4be5e;
+      --calcifer-orange: #f28b44;
+      --water-blue: #7bb5c4;
+      --wood: #8e6d53;
+      --radius-sm: 12px;
+      --radius-md: 20px;
+      --radius-lg: 32px;
+      --shadow-paper: 0 10px 25px -5px rgba(60, 75, 65, 0.08), 0 4px 10px -2px rgba(60, 75, 65, 0.04);
+      --shadow-float: 0 20px 35px -10px rgba(60, 75, 65, 0.15), 0 8px 16px -4px rgba(60, 75, 65, 0.08);
+      --font-body: 'Nunito', -apple-system, sans-serif;
+      --font-jp: 'Kiwi Maru', serif;
+      --font-hand: 'Gaegu', cursive;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: linear-gradient(180deg, #d3ebf5 0%, #e8f4e5 45%, #f4f6e8 100%);
+      font-family: var(--font-body);
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px 16px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Ambient watercolor backdrop clouds & foliage */
+    .cloud {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.65);
+      border-radius: 100px;
+      filter: blur(14px);
+      z-index: 0;
+      pointer-events: none;
+      animation: drift 28s infinite alternate ease-in-out;
+    }
+    .cloud-1 { width: 340px; height: 120px; top: 8%; left: -60px; }
+    .cloud-2 { width: 420px; height: 160px; top: 18%; right: -100px; animation-duration: 36s; }
+    .cloud-3 { width: 280px; height: 90px; bottom: 12%; left: 5%; filter: blur(20px); opacity: 0.5; }
+
+    @keyframes drift {
+      0% { transform: translateX(0) translateY(0); }
+      100% { transform: translateX(45px) translateY(12px); }
+    }
+
+    /* Little Soot Sprite floating */
+    .soot-sprite {
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      background: #2a2e2d;
+      border-radius: 50%;
+      z-index: 1;
+      opacity: 0.85;
+      box-shadow: 0 0 0 2px rgba(42,46,45,0.2);
+      animation: floatSoot 6s infinite ease-in-out;
+    }
+    .soot-sprite::before, .soot-sprite::after {
+      content: '';
+      position: absolute;
+      width: 5px;
+      height: 5px;
+      background: white;
+      border-radius: 50%;
+      top: 6px;
+    }
+    .soot-sprite::before { left: 4px; }
+    .soot-sprite::after { right: 4px; }
+    .soot-eye-dot {
+      position: absolute;
+      width: 2.5px;
+      height: 2.5px;
+      background: #111;
+      border-radius: 50%;
+      top: 7px;
+    }
+    .soot-eye-dot.l { left: 5.5px; }
+    .soot-eye-dot.r { right: 4.5px; }
+
+    @keyframes floatSoot {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-14px) rotate(8deg); }
+    }
+
+    /* Main App Container */
+    .app-shell {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 440px;
+      background: rgba(253, 251, 247, 0.94);
+      backdrop-filter: blur(16px);
+      border: 3px solid #efe7d5;
+      border-radius: var(--radius-lg);
+      padding: 24px 22px;
+      box-shadow: 0 20px 45px rgba(50, 65, 55, 0.12), 0 2px 6px rgba(0,0,0,0.04);
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+      background: #e8f3e3;
+      border: 2px solid #bcd8b5;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+
+    .brand-text h1 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--ink);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-text p {
+      font-family: var(--font-hand);
+      font-size: 1.05rem;
+      color: var(--grass-dark);
+      font-weight: 700;
+    }
+
+    .deck-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: var(--paper-cream);
+      border: 1.5px solid #e2d7be;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--wood);
+    }
+
+    /* Progress & Stats Bar */
+    .progress-section {
+      margin-bottom: 20px;
+    }
+
+    .progress-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--ink-soft);
+      margin-bottom: 6px;
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 10px;
+      background: #e9e3d3;
+      border-radius: 20px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-bar-fill {
+      width: 65%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--grass-green), #8bc34a);
+      border-radius: 20px;
+      transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* Flashcard Flip Stage */
+    .card-stage {
+      perspective: 1200px;
+      width: 100%;
+      height: 380px;
+      margin-bottom: 22px;
+      cursor: pointer;
+    }
+
+    .card-flipper {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transition: transform 0.65s cubic-bezier(0.2, 0.8, 0.2, 1);
+      border-radius: var(--radius-md);
+    }
+
+    .card-stage.flipped .card-flipper {
+      transform: rotateY(180deg);
+    }
+
+    .card-face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      border-radius: var(--radius-md);
+      background: #fffefb;
+      border: 2px solid #e7dfcf;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: var(--shadow-paper);
+      background-image: radial-gradient(#ece5d5 0.75px, transparent 0.75px);
+      background-size: 16px 16px;
+    }
+
+    .card-face.back {
+      transform: rotateY(180deg);
+      background: #fbf9f2;
+      border-color: #dfd4be;
+    }
+
+    /* Card Contents */
+    .card-top-tag {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .tag-pill {
+      font-family: var(--font-hand);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--grass-dark);
+      background: #eef6eb;
+      border: 1px solid #c9e2c4;
+      padding: 3px 10px;
+      border-radius: 12px;
+    }
+
+    .hint-btn {
+      font-size: 0.8rem;
+      color: var(--ink-muted);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .card-center {
+      text-align: center;
+      margin: auto 0;
+    }
+
+    .main-kanji {
+      font-family: var(--font-jp);
+      font-size: 3.8rem;
+      color: var(--ink);
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      line-height: 1.1;
+      margin-bottom: 4px;
+    }
+
+    .furigana {
+      font-family: var(--font-jp);
+      font-size: 1.2rem;
+      color: var(--terracotta);
+      font-weight: 400;
+      margin-bottom: 12px;
+    }
+
+    .reading-romaji {
+      font-size: 0.95rem;
+      color: var(--ink-soft);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .illustration-box {
+      width: 90px;
+      height: 90px;
+      margin: 0 auto 16px;
+      background: #f2f7ef;
+      border: 2px dashed #bdd8b3;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 44px;
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.03);
+    }
+
+    .meaning-english {
+      font-size: 1.55rem;
+      font-weight: 800;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+
+    .card-quote {
+      font-style: italic;
+      font-size: 0.9rem;
+      color: var(--ink-soft);
+      line-height: 1.4;
+      max-width: 290px;
+      margin: 0 auto;
+      background: #f3efe6;
+      padding: 8px 14px;
+      border-radius: 12px;
+      border-left: 3px solid var(--sun-gold);
+    }
+
+    .card-footer-tip {
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--ink-muted);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    /* Action Buttons (Spaced Repetition: Again, Hard, Good, Easy) */
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .review-btn {
+      border: 2px solid transparent;
+      background: #fff;
+      padding: 10px 4px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      transition: all 0.18s ease;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.04);
+    }
+
+    .review-btn:active {
+      transform: translateY(2px);
+    }
+
+    .review-btn .btn-label {
+      font-size: 0.82rem;
+      font-weight: 800;
+    }
+
+    .review-btn .btn-time {
+      font-size: 0.68rem;
+      color: var(--ink-muted);
+      font-weight: 600;
+    }
+
+    .btn-again {
+      border-color: #f7d5cc;
+      color: var(--terracotta);
+      background: #fdf5f3;
+    }
+    .btn-again:hover { background: #fae8e3; }
+
+    .btn-hard {
+      border-color: #fae4be;
+      color: var(--calcifer-orange);
+      background: #fdf9f0;
+    }
+    .btn-hard:hover { background: #fbf0dc; }
+
+    .btn-good {
+      border-color: #cde6c7;
+      color: var(--grass-dark);
+      background: #f3f9f1;
+    }
+    .btn-good:hover { background: #e5f3e1; }
+
+    .btn-easy {
+      border-color: #cde4ee;
+      color: var(--water-blue);
+      background: #f3f8fb;
+    }
+    .btn-easy:hover { background: #e2f0f7; }
+
+    /* Bottom subtle nav */
+    .sub-bar {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1.5px dashed #e4dcce;
+    }
+
+    .sub-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--ink-soft);
+      cursor: pointer;
+      transition: color 0.15s;
+    }
+
+    .sub-item:hover {
+      color: var(--grass-dark);
+    }
+
+    .leaf-deco {
+      display: inline-block;
+      animation: sway 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes sway {
+      0% { transform: rotate(-6deg); }
+      100% { transform: rotate(10deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient Cloud & Soot Sprites -->
+  <div class="cloud cloud-1"></div>
+  <div class="cloud cloud-2"></div>
+  <div class="cloud cloud-3"></div>
+
+  <div class="soot-sprite" style="top: 14%; left: 8%;">
+    <span class="soot-eye-dot l"></span>
+    <span class="soot-eye-dot r"></span>
+  </div>
+  <div class="soot-sprite" style="bottom: 22%; right: 9%; animation-delay: 2.2s; width: 18px; height: 18px;">
+    <span class="soot-eye-dot l" style="top: 5px; left: 3px;"></span>
+    <span class="soot-eye-dot r" style="top: 5px; right: 3px;"></span>
+  </div>
+
+  <!-- Main Flashcard Application Shell -->
+  <div class="app-shell">
+    
+    <!-- Header -->
+    <header class="header">
+      <div class="brand">
+        <div class="brand-icon">🍃</div>
+        <div class="brand-text">
+          <h1>木漏れ日</h1>
+          <p>Komorebi Cards</p>
+        </div>
+      </div>
+      <div class="deck-badge">
+        <span>🌱</span>
+        <span>Forest N5 (13/20)</span>
+      </div>
+    </header>
+
+    <!-- Progress -->
+    <div class="progress-section">
+      <div class="progress-labels">
+        <span>Today's Journey</span>
+        <span>65% mastered</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progressBar"></div>
+      </div>
+    </div>
+
+    <!-- Flashcard Stage (Interactive Flip) -->
+    <div class="card-stage" id="flashcardStage" onclick="toggleFlip()">
+      <div class="card-flipper">
+        
+        <!-- FRONT FACE -->
+        <div class="card-face front">
+          <div class="card-top-tag">
+            <span class="tag-pill">Vocabulary • N5</span>
+            <span class="hint-btn">✨ Tap to reveal</span>
+          </div>
+
+          <div class="card-center">
+            <div class="main-kanji">風</div>
+            <div class="furigana">かぜ</div>
+            <div class="reading-romaji">kaze</div>
+          </div>
+
+          <div class="card-footer-tip">
+            <span class="leaf-deco">🍂</span> "Listen closely to the breeze in the meadow..."
+          </div>
+        </div>
+
+        <!-- BACK FACE -->
+        <div class="card-face back">
+          <div class="card-top-tag">
+            <span class="tag-pill" style="background:#fef3e3; border-color:#f4deb8; color:var(--calcifer-orange);">Meaning & Context</span>
+            <span class="hint-btn">🔄 Flip back</span>
+          </div>
+
+          <div class="card-center">
+            <div class="illustration-box">🎐</div>
+            <div class="meaning-english">Wind / Breeze</div>
+            <p class="card-quote">
+              "The wind rises! We must try to live."<br>
+              <small style="color:var(--ink-muted);">風立ちぬ (Kaze Tachinu)</small>
+            </p>
+          </div>
+
+          <div class="card-footer-tip">
+            <span>🌿</span> Example: 優しい風 (A gentle wind)
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SRS Controls -->
+    <div class="controls">
+      <button class="review-btn btn-again" onclick="nextCard('again')">
+        <span class="btn-label">Again</span>
+        <span class="btn-time">&lt; 1 min</span>
+      </button>
+      <button class="review-btn btn-hard" onclick="nextCard('hard')">
+        <span class="btn-label">Hard</span>
+        <span class="btn-time">12 hrs</span>
+      </button>
+      <button class="review-btn btn-good" onclick="nextCard('good')">
+        <span class="btn-label">Good</span>
+        <span class="btn-time">2 days</span>
+      </button>
+      <button class="review-btn btn-easy" onclick="nextCard('easy')">
+        <span class="btn-label">Easy</span>
+        <span class="btn-time">5 days</span>
+      </button>
+    </div>
+
+    <!-- Bottom utility nav -->
+    <footer class="sub-bar">
+      <div class="sub-item"><span>🎒</span> Deck Library</div>
+      <div class="sub-item"><span>🍄</span> Garden Stats</div>
+      <div class="sub-item"><span>📻</span> Sound on</div>
+    </footer>
+
+  </div>
+
+  <script>
+    function toggleFlip() {
+      const stage = document.getElementById('flashcardStage');
+      stage.classList.toggle('flipped');
+    }
+
+    const cards = [
+      {
+        kanji: "風",
+        furigana: "かぜ",
+        romaji: "kaze",
+        icon: "🎐",
+        meaning: "Wind / Breeze",
+        quote: "The wind rises! We must try to live.",
+        ref: "風立ちぬ (The Wind Rises)",
+        tag: "Vocabulary • N5",
+        example: "優しい風 (A gentle wind)"
+      },
+      {
+        kanji: "森",
+        furigana: "もり",
+        romaji: "mori",
+        icon: "🌲",
+        meaning: "Forest / Woods",
+        quote: "The spirits of the forest are always watching over us.",
+        ref: "もののけ姫 (Princess Mononoke)",
+        tag: "Nature • N5",
+        example: "深い森 (A deep forest)"
+      },
+      {
+        kanji: "旅",
+        furigana: "たび",
+        romaji: "tabi",
+        icon: "🚂",
+        meaning: "Journey / Travel",
+        quote: "Once you meet someone, you never really forget them.",
+        ref: "千と千尋の神隠し (Spirited Away)",
+        tag: "Concepts • N4",
+        example: "列車の旅 (A train journey)"
+      }
+    ];
+
+    let currentIndex = 0;
+
+    function nextCard(type) {
+      const stage = document.getElementById('flashcardStage');
+      stage.classList.remove('flipped');
+      
+      setTimeout(() => {
+        currentIndex = (currentIndex + 1) % cards.length;
+        const card = cards[currentIndex];
+
+        // Front
+        document.querySelector('.front .main-kanji').innerText = card.kanji;
+        document.querySelector('.front .furigana').innerText = card.furigana;
+        document.querySelector('.front .reading-romaji').innerText = card.romaji;
+        
+        // Back
+        document.querySelector('.back .illustration-box').innerText = card.icon;
+        document.querySelector('.back .meaning-english').innerText = card.meaning;
+        document.querySelector('.back .card-quote').innerHTML = `"${card.quote}"<br><small style="color:var(--ink-muted);">${card.ref}</small>`;
+        document.querySelector('.back .card-footer-tip').innerHTML = `<span>🌿</span> Example: ${card.example}`;
+      }, 200);
+    }
+  </script>
+</body>
+</html>
