@@ -538,6 +538,112 @@
       transition-duration: .15s !important;
     }
   }
+
+  /* ============================================================
+     APP NAV (view switching: home / deck-editor / study)
+  ============================================================ */
+  .view { display: none; }
+  .view.active { display: block; animation: viewIn .3s cubic-bezier(.2,.9,.3,1.1); }
+  @keyframes viewIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+  .head-row { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .icon-back {
+    flex: 0 0 auto; width: 40px; height: 40px; border-radius: 12px;
+    border: 1.5px solid #e2d7be; background: var(--paper-cream);
+    font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: transform .15s, background .15s; touch-action: manipulation;
+  }
+  .icon-back:hover { background: #f3ead4; transform: translateX(-2px); }
+  .head-title { flex: 1; font-family: var(--font-hand); font-size: clamp(1.3rem, 5.5vw, 1.7rem); font-weight: 700; color: var(--grass-dark); }
+
+  /* Deck library grid */
+  .deck-lib { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(8px, 2.5vw, 14px); margin-top: 12px; }
+  .deck-card {
+    position: relative; border-radius: var(--radius-md); padding: 14px 12px;
+    background: #fffefb; border: 2px solid #e7dfcf;
+    box-shadow: var(--shadow-paper); cursor: pointer;
+    display: flex; flex-direction: column; gap: 4px; min-height: 108px;
+    transition: transform .15s ease, border-color .15s ease;
+    touch-action: manipulation; text-align: left; font-family: inherit;
+  }
+  .deck-card:hover { transform: translateY(-3px); border-color: #c9e2c4; }
+  .deck-card:active { transform: scale(.98); }
+  .deck-card .dc-emoji { font-size: clamp(1.6rem, 7vw, 2rem); }
+  .deck-card .dc-name { font-weight: 800; font-size: clamp(.95rem, 4vw, 1.05rem); color: var(--ink); line-height: 1.15; }
+  .deck-card .dc-meta { font-family: var(--font-hand); font-size: clamp(.78rem, 3.4vw, .88rem); color: var(--ink-muted); font-weight: 700; }
+  .deck-card .dc-badge { position: absolute; top: 8px; right: 8px; font-size: .7rem; font-weight: 800; color: var(--wood); background: var(--paper-cream); padding: 2px 7px; border-radius: 10px; }
+
+  .new-deck-tile {
+    border-style: dashed; border-color: #cfe0c9; background: #f6faf3;
+    align-items: center; justify-content: center; text-align: center; color: var(--grass-dark);
+    font-weight: 800; font-size: clamp(.9rem, 4vw, 1rem);
+  }
+  .new-deck-tile .dc-emoji { margin-bottom: 2px; }
+
+  /* ============================================================
+     MODAL SHEET (create deck / create card)
+  ============================================================ */
+  .sheet-backdrop {
+    position: fixed; inset: 0; z-index: 200; background: rgba(50,65,55,.35);
+    -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
+    display: flex; align-items: flex-end; justify-content: center;
+    opacity: 0; visibility: hidden; transition: opacity .25s ease, visibility .25s;
+  }
+  .sheet-backdrop.open { opacity: 1; visibility: visible; }
+  .sheet {
+    width: 100%; max-width: 480px; background: var(--paper);
+    border-radius: 24px 24px 0 0; padding: 20px 18px calc(20px + env(safe-area-inset-bottom));
+    transform: translateY(40px); transition: transform .3s cubic-bezier(.2,.85,.25,1.3);
+    box-shadow: 0 -12px 40px rgba(0,0,0,.18);
+  }
+  .sheet-backdrop.open .sheet { transform: translateY(0); }
+  .sheet h3 { font-family: var(--font-hand); font-size: clamp(1.3rem, 5.5vw, 1.6rem); color: var(--grass-dark); margin-bottom: 14px; }
+  .sheet label { display: block; font-weight: 800; font-size: .82rem; color: var(--ink-soft); margin: 10px 0 5px; }
+  .sheet input, .sheet textarea, .sheet select {
+    width: 100%; padding: 11px 12px; border-radius: 12px;
+    border: 1.5px solid #dcd3bd; background: #fffdf8;
+    font-family: inherit; font-size: .95rem; color: var(--ink);
+    transition: border-color .15s;
+  }
+  .sheet input:focus, .sheet textarea:focus, .sheet select:focus { outline: none; border-color: var(--water-blue); }
+  .sheet textarea { resize: vertical; min-height: 60px; }
+  .sheet .f-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .sheet-form-actions { display: flex; gap: 10px; margin-top: 16px; }
+  .btn-primary {
+    flex: 1; min-height: 50px; border: none; border-radius: 14px;
+    background: linear-gradient(135deg, var(--grass-green), var(--grass-dark));
+    color: #fff; font-weight: 800; font-size: .95rem; cursor: pointer;
+    box-shadow: 0 6px 14px -4px rgba(75,122,72,.5); transition: transform .15s;
+    touch-action: manipulation;
+  }
+  .btn-primary:hover { transform: translateY(-2px); }
+  .btn-primary:active { transform: translateY(1px) scale(.98); }
+  .btn-ghost {
+    flex: 1; min-height: 50px; border-radius: 14px; cursor: pointer;
+    border: 2px solid #dfd4be; background: var(--paper-cream);
+    color: var(--wood); font-weight: 800; font-size: .95rem; transition: transform .15s;
+    touch-action: manipulation;
+  }
+  .btn-ghost:hover { transform: translateY(-2px); }
+
+  /* ============================================================
+     DECK EDITOR (manage cards in one deck + add card shortcut)
+  ============================================================ */
+  .edit-hint { font-size: .8rem; color: var(--ink-muted); font-weight: 700; margin-bottom: 12px; }
+  .card-list { list-style: none; margin-top: 8px; }
+  .card-list li {
+    display: flex; align-items: center; gap: 10px;
+    background: #fffefb; border: 1.5px solid #e7dfcf; border-radius: 14px;
+    padding: 10px 12px; margin-bottom: 8px;
+  }
+  .card-list .cl-word { font-weight: 800; font-size: .98rem; flex: 1; }
+  .card-list .cl-en { font-family: var(--font-hand); color: var(--ink-soft); font-weight: 700; font-size: .88rem; }
+  .card-list .cl-del {
+    flex: 0 0 auto; width: 32px; height: 32px; border: none; border-radius: 10px;
+    background: #fbeef1; color: var(--rose); font-size: 15px; cursor: pointer; touch-action: manipulation;
+  }
+  .card-list .cl-del:hover { background: #f7dde4; }
+  .empty-deck { text-align: center; padding: 26px 10px; color: var(--ink-muted); font-weight: 700; font-family: var(--font-hand); font-size: 1rem; }
 </style>
 </head>
 <body>
@@ -571,7 +677,34 @@
   <!-- Main Flashcard Application Shell -->
   <main class="app-shell" id="appShell">
 
-    <header class="header">
+    <!-- Home / Deck Library -->
+    <div class="view" id="viewHome">
+      <div class="head-row">
+        <div class="icon-back" id="homeLogo" aria-label="Deck-Bibliothek">🏡</div>
+        <div class="head-title">Deck-Bibliothek</div>
+      </div>
+      <div class="edit-hint" id="homeHint">Wähle ein Deck zum Lernen, öffne es zum Bearbeiten oder lege ein neues an. Deine Decks bleiben auf diesem Gerät gespeichert.</div>
+      <div class="deck-lib" id="deckLib"></div>
+    </div>
+
+    <!-- Deck Editor -->
+    <div class="view" id="viewEdit">
+      <div class="head-row">
+        <button type="button" class="icon-back" data-nav="home" aria-label="Zurück zur Bibliothek">←</button>
+        <div class="head-title" id="editTitle">Deck</div>
+      </div>
+      <div class="edit-hint" id="editHint">Min-Karten, um ein Deck zu bearbeiten. Tippe auf ein Wort, um es dir vorzusprechen.</div>
+      <button type="button" class="btn-primary" id="editAddCardMain">＋ Karte hinzufügen</button>
+      <ul class="card-list" id="editCardList"></ul>
+      <div class="empty-deck" id="editEmpty">Noch keine Karten. Füge deine erste hinzu! 🍃</div>
+      <button type="button" class="btn-ghost" id="editDeleteDeck" style="width:100%; margin-top:14px;">🗑️ Deck löschen</button>
+    </div>
+
+    <!-- Study View -->
+    <div class="view" id="viewStudy">
+
+    <header class="header" style="margin-top:0;">
+      <button type="button" class="icon-back" data-nav="home" aria-label="Zurück zur Bibliothek">←</button>
       <div class="brand">
         <div class="brand-icon">🍃</div>
         <div class="brand-text">
@@ -660,6 +793,7 @@
           <div class="stat"><b id="sumStreak">0</b><span>Streak</span></div>
         </div>
         <button type="button" class="restart-btn" id="btnRestart">↻ Noch einmal wandern</button>
+        <button type="button" class="btn-ghost" id="btnStudyHome" style="width:auto; margin:8px auto 0; padding:0 18px; min-height:42px;">🏡 Zur Bibliothek</button>
       </div>
       <div class="burst-layer" id="burstLayer"></div>
     </section>
@@ -683,12 +817,67 @@
     <div class="kbd-hint"><kbd>Space</kbd> umdrehen · <kbd>1–4</kbd> bewerten · <kbd>←</kbd><kbd>→</kbd> wischen · <kbd>S</kbd> Aussprache</div>
 
     <footer class="sub-bar">
-      <button type="button" class="sub-item" id="btnDeck"><span>🎒</span> Decks</button>
+      <button type="button" class="sub-item" id="btnDecksFooter"><span>🎒</span> Decks</button>
       <button type="button" class="sub-item" id="btnStats"><span>🍄</span> Stats</button>
       <button type="button" class="sub-item" id="btnSound"><span id="soundIcon">🔊</span> <span id="soundLabel">Sound an</span></button>
     </footer>
 
+    </div><!-- /viewStudy -->
+
   </main>
+
+  <!-- Modal: create deck -->
+  <div class="sheet-backdrop" id="sheetDeck">
+    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetDeckTitle">
+      <h3 id="sheetDeckTitle">Neues Deck anlegen</h3>
+      <label for="newDeckName">Deck-Name</label>
+      <input id="newDeckName" type="text" maxlength="40" placeholder="z. B. Meine Lieblingswörter" autocomplete="off">
+      <div class="f-row">
+        <div>
+          <label for="newDeckEmoji">Symbol</label>
+          <input id="newDeckEmoji" type="text" maxlength="4" value="🌼" autocomplete="off">
+        </div>
+        <div>
+          <label for="newDeckLevel">Stufe</label>
+          <select id="newDeckLevel">
+            <option value="A1">A1</option>
+            <option value="A2">A2</option>
+            <option value="B1">B1</option>
+            <option value="B2">B2</option>
+            <option value="C1">C1</option>
+            <option value="Beliebig">Beliebig</option>
+          </select>
+        </div>
+      </div>
+      <div class="sheet-form-actions">
+        <button type="button" class="btn-ghost" data-close-sheet="sheetDeck">Abbrechen</button>
+        <button type="button" class="btn-primary" id="btnCreateDeck">Erstellen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: create card -->
+  <div class="sheet-backdrop" id="sheetCard">
+    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetCardTitle">
+      <h3 id="sheetCardTitle">Neue Karte</h3>
+      <div class="f-row">
+        <div>
+          <label for="newCardWord">Deutsch (Wort)</label>
+          <input id="newCardWord" type="text" placeholder="Haus" autocomplete="off">
+        </div>
+        <div>
+          <label for="newCardEn">Bedeutung (EN)</label>
+          <input id="newCardEn" type="text" placeholder="house" autocomplete="off">
+        </div>
+      </div>
+      <label for="newCardSentence">Beispielsatz (optional)</label>
+      <textarea id="newCardSentence" placeholder="Das Haus ist groß und gemütlich."></textarea>
+      <div class="sheet-form-actions">
+        <button type="button" class="btn-ghost" data-close-sheet="sheetCard">Abbrechen</button>
+        <button type="button" class="btn-primary" id="btnAddCard">Karte speichern</button>
+      </div>
+    </div>
+  </div>
 
   <div class="toast" id="toast" role="status"></div>
   <div class="sr-only" aria-live="polite" id="liveRegion"></div>
@@ -698,46 +887,77 @@
   'use strict';
 
   /* ============================================================
-     DATA — German deck with Ghibli soul
+     DATA — decks. Built-in seed deck + user decks (localStorage)
   ============================================================ */
-  const DECK = [
-    { id:1,  article:'der', word:'Wind',    forms:'Plural: die Winde',      pos:'Nomen', level:'A1', icon:'🎐', en:'wind',
+  const STORE_KEY = 'komorebi_decks_v1';
+  const CURRENT_DECK_KEY = 'komorebi_active_deck';
+
+  const SEED_DECK = {
+    id: 'seed-a1', name: 'Deutsch A1', level: 'A1', emoji: '🌱', builtin: true,
+    cards: [
+    { id: 'w1',  article:'der', word:'Wind',    forms:'Plural: die Winde',      pos:'Nomen', level:'A1', icon:'🎐', en:'wind',
       sentence:'Der Wind erhebt sich, wir müssen versuchen zu leben.', sentenceEn:'The wind is rising; we must try to live.',
       film:'Wie der Wind sich hebt', whisper:'Hörst du die Brise in der Wiese?' },
-    { id:2,  article:'der', word:'Wald',    forms:'Plural: die Wälder',     pos:'Nomen', level:'A1', icon:'🌲', en:'forest',
+    { id: 'w2',  article:'der', word:'Wald',    forms:'Plural: die Wälder',     pos:'Nomen', level:'A1', icon:'🌲', en:'forest',
       sentence:'Die Geister des Waldes wachen über uns.', sentenceEn:'The spirits of the forest watch over us.',
       film:'Prinzessin Mononoke', whisper:'Etwas raschelt zwischen den Bäumen …' },
-    { id:3,  article:'die', word:'Reise',   forms:'Plural: die Reisen',     pos:'Nomen', level:'A2', icon:'🚂', en:'journey',
+    { id: 'w3',  article:'die', word:'Reise',   forms:'Plural: die Reisen',     pos:'Nomen', level:'A2', icon:'🚂', en:'journey',
       sentence:'Chihiros Reise beginnt in einer geheimnisvollen Stadt.', sentenceEn:"Chihiro's journey begins in a mysterious town.",
       film:'Chihiros Reise ins Zauberland', whisper:'Schnapp dir dein Ticket, gleich geht’s los.' },
-    { id:4,  article:'das', word:'Schloss', forms:'Plural: die Schlösser',  pos:'Nomen', level:'A2', icon:'🏰', en:'castle',
+    { id: 'w4',  article:'das', word:'Schloss', forms:'Plural: die Schlösser',  pos:'Nomen', level:'A2', icon:'🏰', en:'castle',
       sentence:'Das wandelnde Schloss stapft über die Berge.', sentenceEn:'The moving castle trudges across the mountains.',
       film:'Das wandelnde Schloss', whisper:'Es stapft, es dampft, es wandert …' },
-    { id:5,  article:'das', word:'Feuer',   forms:'Plural: die Feuer',      pos:'Nomen', level:'A1', icon:'🔥', en:'fire',
+    { id: 'w5',  article:'das', word:'Feuer',   forms:'Plural: die Feuer',      pos:'Nomen', level:'A1', icon:'🔥', en:'fire',
       sentence:'Calcifer, das Feuer, hält das Schloss am Laufen.', sentenceEn:'Calcifer the fire keeps the castle running.',
       film:'Das wandelnde Schloss', whisper:'Knister, knister — wer spricht denn da?' },
-    { id:6,  article:'der', word:'Regen',   forms:'kein Plural',            pos:'Nomen', level:'A1', icon:'🌧️', en:'rain',
+    { id: 'w6',  article:'der', word:'Regen',   forms:'kein Plural',            pos:'Nomen', level:'A1', icon:'🌧️', en:'rain',
       sentence:'Totoro wartet im Regen an der Bushaltestelle.', sentenceEn:'Totoro waits in the rain at the bus stop.',
       film:'Mein Nachbar Totoro', whisper:'Vergiss deinen Regenschirm nicht!' },
-    { id:7,  article:'die', word:'Katze',   forms:'Plural: die Katzen',     pos:'Nomen', level:'A1', icon:'🐈‍⬛', en:'cat',
+    { id: 'w7',  article:'die', word:'Katze',   forms:'Plural: die Katzen',     pos:'Nomen', level:'A1', icon:'🐈‍⬛', en:'cat',
       sentence:'Die Katze Jiji begleitet Kiki auf jedem Flug.', sentenceEn:'Jiji the cat joins Kiki on every flight.',
       film:'Kikis kleiner Lieferservice', whisper:'Miau! Jiji hat immer einen Kommentar.' },
-    { id:8,  article:'das', word:'Meer',    forms:'Plural: die Meere',      pos:'Nomen', level:'A1', icon:'🌊', en:'sea',
+    { id: 'w8',  article:'das', word:'Meer',    forms:'Plural: die Meere',      pos:'Nomen', level:'A1', icon:'🌊', en:'sea',
       sentence:'Ponyo springt über die Wellen des Meeres.', sentenceEn:'Ponyo leaps across the waves of the sea.',
       film:'Ponyo – Das große Abenteuer am Meer', whisper:'Wellen, Schinken und ein kleiner Fisch.' },
-    { id:9,  article:'der', word:'Zug',     forms:'Plural: die Züge',       pos:'Nomen', level:'A1', icon:'🚃', en:'train',
+    { id: 'w9',  article:'der', word:'Zug',     forms:'Plural: die Züge',       pos:'Nomen', level:'A1', icon:'🚃', en:'train',
       sentence:'Der Zug gleitet leise über das stille Wasser.', sentenceEn:'The train glides quietly over the still water.',
       film:'Chihiros Reise ins Zauberland', whisper:'Bitte einsteigen — Richtung Geisterwelt.' },
-    { id:10, article:'verb', word:'fliegen', forms:'flog · ist geflogen',   pos:'Verb',  level:'A1', icon:'🧹', en:'to fly',
+    { id: 'w10', article:'verb', word:'fliegen', forms:'flog · ist geflogen',   pos:'Verb',  level:'A1', icon:'🧹', en:'to fly',
       sentence:'Kiki fliegt auf ihrem Besen über die Dächer.', sentenceEn:'Kiki flies on her broom over the rooftops.',
       film:'Kikis kleiner Lieferservice', whisper:'Besen bereit? Abheben!' },
-    { id:11, article:'der', word:'Stern',   forms:'Plural: die Sterne',     pos:'Nomen', level:'A1', icon:'⭐', en:'star',
+    { id: 'w11', article:'der', word:'Stern',   forms:'Plural: die Sterne',     pos:'Nomen', level:'A1', icon:'⭐', en:'star',
       sentence:'Ein fallender Stern landet in Howls Händen.', sentenceEn:"A falling star lands in Howl's hands.",
       film:'Das wandelnde Schloss', whisper:'Wünsch dir was, wenn er fällt.' },
-    { id:12, article:'das', word:'Licht',   forms:'Plural: die Lichter',    pos:'Nomen', level:'A1', icon:'🏮', en:'light',
+    { id: 'w12', article:'das', word:'Licht',   forms:'Plural: die Lichter',    pos:'Nomen', level:'A1', icon:'🏮', en:'light',
       sentence:'Die Lichter der Geisterwelt gehen bei Dämmerung an.', sentenceEn:'The lights of the spirit world come on at dusk.',
       film:'Chihiros Reise ins Zauberland', whisper:'Folge den Laternen in der Dämmerung.' }
-  ];
+    ]
+  };
+
+  function loadDecks() {
+    let user = [];
+    try { const raw = localStorage.getItem(STORE_KEY); if (raw) user = JSON.parse(raw); } catch (e) {}
+    if (!Array.isArray(user)) user = [];
+    return { seedDeck: SEED_DECK, userDecks: user };
+  }
+  function saveUserDecks(decks) {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(decks)); } catch (e) {}
+  }
+  // All decks, seed first.
+  function allDecks() {
+    const { seedDeck, userDecks } = loadDecks();
+    return [seedDeck, ...userDecks];
+  }
+  function findDeck(id) {
+    const d = allDecks();
+    return d.find(x => x.id === id) || null;
+  }
+  function uid() {
+    return 'd' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+  }
+  function cardUid() {
+    return 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  }
 
   /* ============================================================
      DOM REFS
@@ -752,14 +972,24 @@
   const streakFlame = $('streakFlame'), streakCount = $('streakCount');
   const indLeft = $('indLeft'), indRight = $('indRight');
   const summary = $('summary'), burstLayer = $('burstLayer'), toastEl = $('toast'), liveRegion = $('liveRegion');
+  const viewHome = $('viewHome'), viewEdit = $('viewEdit'), viewStudy = $('viewStudy');
+  const deckLib = $('deckLib'), editTitle = $('editTitle'), editCardList = $('editCardList'), editEmpty = $('editEmpty');
+  const sheetDeck = $('sheetDeck'), sheetCard = $('sheetCard');
+  const newDeckName = $('newDeckName'), newDeckEmoji = $('newDeckEmoji'), newDeckLevel = $('newDeckLevel');
+  const newCardWord = $('newCardWord'), newCardEn = $('newCardEn'), newCardSentence = $('newCardSentence');
 
   /* ============================================================
      STATE
   ============================================================ */
   let queue = [], currentCard = null, flipped = false;
-  let completed = new Set(), results = { again:0, hard:0, good:0, easy:0 };
+  let completed = new Set(), results = { again: 0, hard: 0, good: 0, easy: 0 };
   let streak = 0, bestStreak = 0;
   let sessionDone = false, advancing = false, userInteracted = false;
+  let activeDeckId = null, editingDeckId = null;
+
+  function getActiveDeck() {
+    return activeDeckId ? findDeck(activeDeckId) : null;
+  }
 
   /* ============================================================
      AUDIO — Web Audio API synth (no external files)
@@ -897,10 +1127,12 @@
   }
 
   function updateHUD() {
-    const pct = Math.round(completed.size / DECK.length * 100);
+    const deck = getActiveDeck();
+    const total = deck ? deck.cards.length : 0;
+    const pct = total ? Math.round(completed.size / total * 100) : 0;
     progressBar.style.width = pct + '%';
-    progressRight.textContent = `${completed.size}/${DECK.length} gemeistert`;
-    deckCount.textContent = `Deutsch A1 · ${completed.size}/${DECK.length}`;
+    progressRight.textContent = `${completed.size}/${total} gemeistert`;
+    deckCount.textContent = `${deck ? deck.name : 'Deck'} · ${completed.size}/${total}`;
     streakFlame.style.display = streak > 0 ? 'inline-flex' : 'none';
     streakCount.textContent = streak;
     if (streak > 0) {
@@ -1039,7 +1271,10 @@
   }
 
   function startSession() {
-    queue = shuffle(DECK.slice());
+    const deck = getActiveDeck();
+    const cards = deck ? deck.cards : [];
+    if (cards.length === 0) { showView('home'); toast('🍂 Dieses Deck hat noch keine Karten.'); return; }
+    queue = shuffle(cards.slice());
     completed = new Set();
     results = { again: 0, hard: 0, good: 0, easy: 0 };
     streak = 0; bestStreak = 0;
@@ -1052,7 +1287,7 @@
     renderNext();
   }
 
-  /* Leaf burst celebration (Web Animations API) */
+  /* Leaf burst celebration (Web Animations API, graceful fallback) */
   function leafBurst() {
     const em = ['🍃', '🍂', '🌸', '✨'];
     for (let i = 0; i < 14; i++) {
@@ -1062,6 +1297,7 @@
       burstLayer.appendChild(s);
       const ang = Math.random() * Math.PI * 2;
       const dist = 70 + Math.random() * 130;
+      if (typeof s.animate !== 'function') { s.remove(); continue; }   // webview lacks Web Animations API
       s.animate([
         { transform: 'translate(-50%,-50%) rotate(0deg)', opacity: 1 },
         { transform: `translate(calc(-50% + ${Math.cos(ang) * dist}px), calc(-50% + ${Math.sin(ang) * dist - 60}px)) rotate(${(Math.random() * 2 - 1) * 360}deg)`, opacity: 0 }
@@ -1071,57 +1307,270 @@
   }
 
   /* ============================================================
-     WIRING — buttons, keyboard, footer
-  ============================================================ */
-  document.querySelectorAll('.review-btn').forEach(btn => {
-    btn.addEventListener('click', () => grade(btn.dataset.grade));
-  });
-
-  $('speakFront').addEventListener('click', e => { e.stopPropagation(); AudioEngine.play('tap'); speakWord(); });
-  $('speakBack').addEventListener('click',  e => { e.stopPropagation(); AudioEngine.play('tap'); speakSentence(); });
-
-  $('btnRestart').addEventListener('click', () => { AudioEngine.play('tap'); startSession(); toast('🌱 Neue Runde — viel Spaß!'); });
-  $('btnDeck').addEventListener('click', () => { AudioEngine.play('tap'); startSession(); toast('🎒 Deck neu gemischt!'); });
-  $('btnStats').addEventListener('click', () => {
-    AudioEngine.play('tap');
-    const total = results.again + results.hard + results.good + results.easy;
-    toast(`🍄 ${total} bewertet · ${results.again}× nochmal · bester Streak ${bestStreak}`);
-  });
-  $('btnSound').addEventListener('click', () => {
-    const on = AudioEngine.toggle();
-    $('soundIcon').textContent = on ? '🔊' : '🔇';
-    $('soundLabel').textContent = on ? 'Sound an' : 'Sound aus';
-    if (on) AudioEngine.play('good');
-    if (!on && 'speechSynthesis' in window) speechSynthesis.cancel();
-    toast(on ? '🔊 Sound an' : '🔇 Sound aus');
-  });
-
-  document.addEventListener('keydown', e => {
-    if (e.repeat) return;
-    const onBtn = (e.target.tagName || '').toLowerCase() === 'button';
-    switch (e.key) {
-      case ' ':
-      case 'Enter':
-        if (onBtn) return;               // let focused buttons behave natively
-        e.preventDefault(); toggleFlip(); break;
-      case '1': grade('again'); break;
-      case '2': grade('hard');  break;
-      case '3': grade('good');  break;
-      case '4': grade('easy');  break;
-      case 'ArrowLeft':  grade('again'); break;
-      case 'ArrowRight': grade('good');  break;
-      case 's': case 'S': flipped ? speakSentence() : speakWord(); break;
+       VIEWS & NAVIGATION
+    ============================================================ */
+    function showView(name) {
+      viewHome.classList.toggle('active', name === 'home');
+      viewEdit.classList.toggle('active', name === 'edit');
+      viewStudy.classList.toggle('active', name === 'study');
+      if (name === 'home') renderLibrary();
+      if (name === 'edit' && editingDeckId) renderEditor();
+      if (name === 'study') { summary.classList.remove('show'); summary.setAttribute('aria-hidden', 'true'); shell.classList.remove('session-done'); }
     }
-  });
 
-  // Unlock audio + enable auto-pronunciation after first user gesture
-  document.addEventListener('pointerdown', () => { userInteracted = true; AudioEngine.unlock(); });
+    /* ============================================================
+       DECK LIBRARY (home view)
+    ============================================================ */
+    function renderLibrary() {
+      const decks = allDecks();
+      deckLib.innerHTML = '';
+      decks.forEach(d => {
+        const el = document.createElement('button');
+        el.type = 'button';
+        el.className = 'deck-card';
+        el.setAttribute('aria-label', `${d.name} zum Lernen`);
+        el.innerHTML = `
+          <span class="dc-emoji">${d.emoji}</span>
+          <span class="dc-name">${escapeHtml(d.name)}</span>
+          <span class="dc-meta">${d.cards.length} Karten · ${summarizePos(d.cards)}</span>
+          ${d.builtin ? '<span class="dc-badge">⭐</span>' : '<span class="dc-badge">📝</span>'}
+        `;
+        el.addEventListener('click', () => openDeckFromLibrary(d.id));
+        deckLib.appendChild(el);
+      });
+      // New deck tile
+      const newTile = document.createElement('button');
+      newTile.type = 'button';
+      newTile.className = 'deck-card new-deck-tile';
+      newTile.innerHTML = `<span class="dc-emoji">＋</span><span>Neues Deck</span>`;
+      newTile.addEventListener('click', () => { openSheet(sheetDeck); });
+      deckLib.appendChild(newTile);
+    }
+    function openDeckFromLibrary(id) {
+      const d = findDeck(id);
+      if (!d) return;
+      AudioEngine.play('tap');
+      if (d.cards.length === 0) {
+        editingDeckId = id;
+        showView('edit');
+        renderEditor();
+        return;
+      }
+      activeDeckId = id;
+      showView('study');
+      startSession();
+    }
+    function summarizePos(cards) {
+      const n = cards.filter(c => c.pos === 'Nomen').length;
+      const v = cards.filter(c => c.pos === 'Verb').length;
+      const a = cards.filter(c => c.pos && c.pos !== 'Nomen' && c.pos !== 'Verb').length;
+      const parts = [];
+      if (n) parts.push(`③ ${n}`);
+      if (v) parts.push(`${v} Verben`);
+      if (a) parts.push(`${a} andere`);
+      return parts.join(' · ') || '🕊️ neu';
+    }
+    function escapeHtml(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
 
-  /* ============================================================
-     GO
-  ============================================================ */
-  startSession();
-})();
+    /* ============================================================
+       DECK EDITOR
+    ============================================================ */
+    function renderEditor() {
+      const d = findDeck(editingDeckId);
+      if (!d) { showView('home'); return; }
+      editTitle.textContent = `${d.emoji} ${d.name}`;
+      editCardList.innerHTML = '';
+      d.cards.forEach(c => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <span class="cl-word">${escapeHtml(c.article === 'verb' ? c.word : c.article + ' ' + c.word)}</span>
+          <span class="cl-en">${escapeHtml(c.en || '')}</span>
+          <button type="button" class="cl-del" data-card="${escapeHtml(c.id)}" aria-label="Karte löschen">✕</button>
+        `;
+        li.querySelector('.cl-word').addEventListener('click', () => {
+          AudioEngine.play('tap');
+          speakGerman(c.article === 'verb' ? c.word : `${c.article} ${c.word}`);
+        });
+        li.querySelector('.cl-del').addEventListener('click', () => deleteCard(d.id, c.id));
+        editCardList.appendChild(li);
+      });
+      editEmpty.style.display = d.cards.length ? 'none' : 'block';
+    }
+    function deleteCard(deckId, cardId) {
+      const { seedDeck, userDecks } = loadDecks();
+      const target = deckId === seedDeck.id ? null : userDecks.find(x => x.id === deckId);
+      if (deckId === seedDeck.id) { toast('⭐ Das mitgelieferte Deck kannst du nicht verändern.'); return; }
+      if (!target) return;
+      target.cards = target.cards.filter(c => c.id !== cardId);
+      saveUserDecks(userDecks);
+      renderEditor();
+      toast('🗑️ Karte gelöscht');
+    }
+    function deleteDeck(deckId) {
+      if (deckId === SEED_DECK.id) { toast('⭐ Das mitgelieferte Deck kannst du nicht löschen.'); return; }
+      if (!confirm('Deck wirklich löschen?')) return;
+      const { userDecks } = loadDecks();
+      saveUserDecks(userDecks.filter(x => x.id !== deckId));
+      showView('home');
+      toast('🗑️ Deck gelöscht');
+    }
+
+    /* ============================================================
+       SHEETS (create deck / create card)
+    ============================================================ */
+    function openSheet(sheet) {
+      if (sheet === sheetCard) { newCardWord.value = ''; newCardEn.value = ''; newCardSentence.value = ''; }
+      if (sheet === sheetDeck) { newDeckName.value = ''; }
+      sheet.classList.add('open');
+      sheet.setAttribute('aria-hidden', 'false');
+    }
+    function closeSheet(sheet) {
+      sheet.classList.remove('open');
+      sheet.setAttribute('aria-hidden', 'true');
+    }
+    document.querySelectorAll('[data-close-sheet]').forEach(btn => {
+      btn.addEventListener('click', () => closeSheet($(btn.dataset.closeSheet)));
+    });
+    [sheetDeck, sheetCard].forEach(s => {
+      s.addEventListener('click', e => { if (e.target === s) closeSheet(s); });
+    });
+
+    function createDeck() {
+      const name = newDeckName.value.trim();
+      if (!name) { toast('🌼 Bitte einen Namen eingeben.'); return; }
+      const { userDecks } = loadDecks();
+      const deck = {
+        id: uid(), name, level: newDeckLevel.value || 'Beliebig',
+        emoji: newDeckEmoji.value.trim() || '🌼', builtin: false, cards: []
+      };
+      userDecks.push(deck);
+      saveUserDecks(userDecks);
+      closeSheet(sheetDeck);
+      editingDeckId = deck.id;
+      showView('edit');
+      toast('🌼 Deck erstellt — jetzt Karten hinzufügen!');
+    }
+    function addCard() {
+      const word = newCardWord.value.trim();
+      const en = newCardEn.value.trim();
+      if (!word) { toast('✏️ Bitte ein deutsches Wort eingeben.'); return; }
+      const d = findDeck(editingDeckId);
+      if (!d) return;
+      if (editingDeckId === SEED_DECK.id) {
+        // Allow editing seed deck copy-style: create a user deck seeded from it.
+        const { userDecks } = loadDecks();
+        const copy = JSON.parse(JSON.stringify(SEED_DECK));
+        copy.id = uid(); copy.name = 'Meine Kopie'; copy.builtin = false;
+        copy.cards = copy.cards.concat(mkCard(word, en));
+        userDecks.push(copy);
+        saveUserDecks(userDecks);
+        editingDeckId = copy.id;
+        showView('edit');
+        toast("⭐ Es wurde eine Kopie als eigenes Deck angelegt — du kannst sie umbenennen oder weitere Karten hinzufügen.");
+        return;
+      }
+      const { seedDeck, userDecks } = loadDecks();
+      const target = userDecks.find(x => x.id === editingDeckId);
+      if (!target) return;
+      target.cards.push(mkCard(word, en));
+      saveUserDecks(userDecks);
+      closeSheet(sheetCard);
+      renderEditor();
+      toast(`✓ „${word}" hinzugefügt`);
+    }
+    function mkCard(word, en) {
+      const icon = ['🌿','🍄','🐌','🦋','🐞','🌼','🍂','☀️'][Math.floor(Math.random() * 8)];
+      const sentence = newCardSentence.value.trim();
+      return {
+        id: cardUid(), article: 'der', word,
+        forms: '', pos: 'Nomen', level: newDeckLevel.value || 'A1', icon,
+        en: en || '',
+        sentence, sentenceEn: '',
+        film: '', whisper: ''
+      };
+    }
+
+    /* ============================================================
+       WIRING — buttons, keyboard, footer
+    ============================================================ */
+    document.querySelectorAll('.review-btn').forEach(btn => {
+      btn.addEventListener('click', () => grade(btn.dataset.grade));
+    });
+
+    $('speakFront').addEventListener('click', e => { e.stopPropagation(); AudioEngine.play('tap'); speakWord(); });
+    $('speakBack').addEventListener('click',  e => { e.stopPropagation(); AudioEngine.play('tap'); speakSentence(); });
+
+    $('btnRestart').addEventListener('click', () => { AudioEngine.play('tap'); startSession(); toast('🌱 Neue Runde — viel Spaß!'); });
+    $('btnStudyHome').addEventListener('click', () => { AudioEngine.play('tap'); activeDeckId = null; summary.classList.remove('show'); summary.setAttribute('aria-hidden','true'); showView('home'); });
+    $('btnDecksFooter').addEventListener('click', () => {
+      AudioEngine.play('tap');
+      const cur = getActiveDeck();
+      if (cur) { editingDeckId = cur.id; showView('edit'); }
+      else showView('home');
+    });
+    $('btnStats').addEventListener('click', () => {
+      AudioEngine.play('tap');
+      const total = results.again + results.hard + results.good + results.easy;
+      toast(`🍄 ${total} bewertet · ${results.again}× nochmal · bester Streak ${bestStreak}`);
+    });
+    $('btnSound').addEventListener('click', () => {
+      const on = AudioEngine.toggle();
+      $('soundIcon').textContent = on ? '🔊' : '🔇';
+      $('soundLabel').textContent = on ? 'Sound an' : 'Sound aus';
+      if (on) AudioEngine.play('good');
+      if (!on && 'speechSynthesis' in window) speechSynthesis.cancel();
+      toast(on ? '🔊 Sound an' : '🔇 Sound aus');
+    });
+    $('homeLogo').addEventListener('click', () => { AudioEngine.play('tap'); showView('home'); });
+    document.querySelectorAll('[data-nav="home"]').forEach(btn => {
+      btn.addEventListener('click', () => { AudioEngine.play('tap'); activeDeckId = null; showView('home'); });
+    });
+    $('editAddCardMain').addEventListener('click', () => { AudioEngine.play('tap'); openSheet(sheetCard); });
+    $('editDeleteDeck').addEventListener('click', () => deleteDeck(editingDeckId));
+    $('btnCreateDeck').addEventListener('click', createDeck);
+    $('btnAddCard').addEventListener('click', addCard);
+    [newDeckName, newDeckEmoji, newCardWord, newCardEn, newCardSentence].forEach(inp => {
+      inp.addEventListener('keydown', e => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          if (inp.closest('#sheetDeck')) createDeck();
+          else if (inp.closest('#sheetCard')) addCard();
+        }
+      });
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.repeat) return;
+      if (viewStudy.classList.contains('active')) {
+        const onBtn = (e.target.tagName || '').toLowerCase() === 'button';
+        switch (e.key) {
+          case ' ':
+          case 'Enter':
+            if (onBtn) return;
+            e.preventDefault(); toggleFlip(); break;
+          case '1': grade('again'); break;
+          case '2': grade('hard');  break;
+          case '3': grade('good');  break;
+          case '4': grade('easy');  break;
+          case 'ArrowLeft':  grade('again'); break;
+          case 'ArrowRight': grade('good');  break;
+          case 's': case 'S': flipped ? speakSentence() : speakWord(); break;
+        }
+      }
+    });
+
+    // Unlock audio + enable auto-pronunciation after first user gesture
+    document.addEventListener('pointerdown', () => { userInteracted = true; AudioEngine.unlock(); });
+
+    /* ============================================================
+       GO
+    ============================================================ */
+    showView('home');
+  })();
 </script>
 </body>
 </html>
